@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Great Sandwich Machine</title>
+    <style>
+        /* ═══════════════════════════════════════════════════════════════════════════
+           AESTHETIC: GLOBAL VILLAGE JAVA HOUSE (Late 90s / Early 00s)
+           ═══════════════════════════════════════════════════════════════════════════ */
+        :root {
+            --java-brown: #3E2723;
+            --clay-orange: #D84315;
+            --mustard-yellow: #F9A825;
+            --sage-green: #558B2F;
+            --cream-paper: #FFF8E1;
+            --ink-black: #1a1a1a;
+            
+            /* The "Hand-Drawn" Border Radius Trick */
+            --wobbly-border: 255px 15px 225px 15px / 15px 225px 15px 255px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+            color: var(--java-brown);
+            min-height: 100vh;
+            padding: 16px;
+            padding-bottom: 120px;
+            max-width: 800px;
+            margin: 0 auto;
+            
+            /* CUSTOM SCRAWLED ART BACKGROUND */
+            background-color: #EFEBE9;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30,20 Q40,5 50,20 T70,20' fill='none' stroke='%233E2723' stroke-width='3' stroke-linecap='round' opacity='0.2'/%3E%3Cpath d='M35,25 Q45,10 55,25 T75,25' fill='none' stroke='%233E2723' stroke-width='3' stroke-linecap='round' opacity='0.2'/%3E%3Ccircle cx='20' cy='80' r='8' fill='none' stroke='%233E2723' stroke-width='3' opacity='0.15'/%3E%3Cpath d='M15,80 L25,80' stroke='%233E2723' stroke-width='3' opacity='0.15'/%3E%3Cpath d='M80,80 Q90,70 80,60 Q70,70 80,80' fill='none' stroke='%233E2723' stroke-width='3' opacity='0.15'/%3E%3C/svg%3E");
+        }
+
+        /* ------------------ UI COMPONENTS ------------------ */
+
+        .card {
+            background: var(--cream-paper);
+            border: 3px solid var(--java-brown);
+            /* Wobbly organic shape */
+            border-radius: 2px 12px 3px 15px; 
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 6px 6px 0px rgba(62, 39, 35, 0.2);
+            position: relative;
+        }
+
+        /* Header Styling */
+        .header { text-align: center; margin-bottom: 30px; margin-top: 20px; }
+        .header h1 { 
+            font-size: 2.5em; 
+            color: var(--clay-orange);
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            transform: rotate(-1deg);
+            text-shadow: 2px 2px 0px var(--java-brown);
+        }
+        
+        .sandwich-count {
+            display: inline-block;
+            background: var(--java-brown);
+            color: var(--mustard-yellow);
+            padding: 4px 12px;
+            border-radius: 15px 4px 12px 6px; /* Funky shape */
+            font-weight: bold;
+            font-size: 0.9em;
+            transform: rotate(1deg);
+            margin-top: 8px;
+            border: 2px solid var(--cream-paper);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+
+        /* Inputs */
+        input[type="text"] {
+            background: white;
+            border: 3px solid var(--java-brown);
+            border-radius: 8px 4px 10px 3px;
+            padding: 12px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1rem;
+            width: 100%;
+            outline: none;
+        }
+        input[type="text"]:focus {
+            background: #FFFDE7;
+            border-color: var(--clay-orange);
+        }
+
+        /* Funky Buttons */
+        button {
+            font-family: inherit;
+            border: 3px solid var(--java-brown);
+            background: var(--mustard-yellow);
+            color: var(--java-brown);
+            padding: 10px 16px;
+            cursor: pointer;
+            font-weight: 900;
+            text-transform: uppercase;
+            border-radius: 10px 4px 12px 5px; /* Organic corners */
+            box-shadow: 3px 3px 0px var(--java-brown);
+            transition: all 0.1s;
+        }
+        button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px var(--java-brown);
+        }
+        
+        .btn-menu {
+            background: var(--clay-orange);
+            color: white;
+            width: 100%;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            border-radius: 4px 15px 5px 12px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+        .tab-button {
+            background: white;
+            color: var(--java-brown);
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+        .tab-button.active {
+            background: var(--java-brown);
+            color: var(--mustard-yellow);
+            transform: rotate(-1deg);
+        }
+
+        /* Ingredients & Grid */
+        .ingredients-grid, .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            max-height: 350px;
+            overflow-y: auto;
+            padding: 4px; /* Space for outlines */
+        }
+
+        /* Item Cards */
+        .ingredient-item, .option-item {
+            border: 2px solid var(--java-brown);
+            background: white;
+            border-radius: 8px 4px 10px 3px;
+            padding: 10px 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+        .ingredient-item:hover, .option-item:hover {
+            background: var(--mustard-yellow);
+            transform: scale(1.05) rotate(1deg);
+        }
+        .ingredient-item.hidden { display: none; }
+        
+        .option-item.selected, .option-item.selected-side {
+            background: var(--clay-orange);
+            color: white;
+            font-weight: bold;
+            transform: rotate(-1deg);
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+        }
+
+        /* Flavor Text Bubble */
+        .flavor-text {
+            margin-top: 16px;
+            background: white;
+            border: 2px solid var(--java-brown);
+            border-radius: 15px;
+            padding: 10px;
+            text-align: center;
+            font-style: italic;
+            position: relative;
+        }
+        /* Speech bubble tail */
+        .flavor-text::after {
+            content: '';
+            position: absolute;
+            top: -10px; left: 20px;
+            border-width: 0 10px 10px;
+            border-style: solid;
+            border-color: var(--java-brown) transparent;
+            display: block;
+            width: 0;
+        }
+
+        /* Sandwich Stack */
+        .sandwich-stack { 
+            display: flex; 
+            flex-direction: column-reverse; 
+            gap: 6px; 
+            min-height: 120px;
+            padding: 12px;
+            background: white;
+            border: 3px solid var(--java-brown);
+            border-radius: 4px;
+            margin-bottom: 16px;
+            /* Sketchy background pattern */
+            background-image: linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee), 
+            linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+
+        .sandwich-layer {
+            padding: 12px;
+            background: var(--cream-paper);
+            border: 2px solid var(--java-brown);
+            border-radius: 8px 2px 6px 4px;
+            text-align: center;
+            font-weight: bold;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+        
+        .remove-btn {
+            position: absolute;
+            right: 6px;
+            background: var(--clay-orange);
+            color: white;
+            font-size: 1em;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--java-brown);
+            box-shadow: none;
+        }
+
+        .action-buttons { display: flex; gap: 12px; }
+        .btn-identify { flex: 2; background: var(--sage-green); color: white; }
+        .btn-share { flex: 1; background: var(--mustard-yellow); }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(62, 39, 35, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .modal.show { display: flex; }
+        
+        .modal-window {
+            background: var(--cream-paper);
+            width: 100%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 4px solid var(--java-brown);
+            border-radius: 8px 20px 10px 15px;
+            box-shadow: 10px 10px 0px var(--mustard-yellow);
+        }
+
+        .modal-header {
+            background: var(--clay-orange);
+            color: white;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--java-brown);
+        }
+
+        /* Menu Sorting */
+        .menu-controls {
+            padding: 12px;
+            background: white;
+            border-bottom: 2px solid var(--java-brown);
+            display: flex;
+            gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .sort-btn {
+            flex: 1;
+            font-size: 0.85em;
+            background: #eee;
+            color: #666;
+            box-shadow: none;
+            border: 2px solid #ccc;
+        }
+        .sort-btn.active {
+            background: var(--java-brown);
+            color: var(--mustard-yellow);
+            border-color: var(--java-brown);
+            transform: rotate(-1deg);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+            gap: 0;
+        }
+        .menu-item {
+            padding: 12px;
+            border-bottom: 1px solid rgba(62,39,35,0.2);
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+        .menu-item:hover { background: var(--mustard-yellow); color: var(--java-brown); }
+        
+        .alpha-header {
+            background: #dcd0c0;
+            padding: 8px 12px;
+            font-weight: 900;
+            color: var(--java-brown);
+        }
+
+        /* Recipe Card */
+        .recipe-content { padding: 20px; text-align: center; }
+        .recipe-paper {
+            background: white;
+            border: 2px dashed var(--java-brown);
+            padding: 20px;
+            margin-bottom: 20px;
+            transform: rotate(1deg);
+        }
+
+        /* Search Results */
+        .search-results {
+            background: white;
+            border: 3px solid var(--java-brown);
+            border-radius: 8px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        .search-results.active { display: block; }
+        .search-item { padding: 10px; border-bottom: 1px dotted var(--java-brown); cursor: pointer; }
+        .search-item:hover { background: var(--mustard-yellow); }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>☕ The Great Sandwich Machine</h1>
+        <div class="sandwich-count" id="sandwichCount">Brewing Data...</div>
+    </div>
+
+    <div class="card">
+        <button id="openMenuBtn" class="btn-menu">📖 View Full Menu</button>
+        <div style="position: relative;">
+            <input type="text" id="searchInput" placeholder="Search for a recipe...">
+            <div id="searchResults" class="search-results"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="tabs" id="categoryTabs"></div>
+        
+        <div style="display:flex; justify-content:space-between; margin-bottom:12px; align-items:center; flex-wrap:wrap; gap:10px;">
+            <input type="text" id="ingredientFilter" placeholder="Filter..." style="flex:1;">
+            <label style="font-weight:bold; display:flex; align-items:center; gap:6px;">
+                <input type="checkbox" id="autoBreadToggle" checked style="width:auto; transform:scale(1.5);"> Auto-Bread
+            </label>
+        </div>
+        
+        <div id="ingredientsGrid" class="ingredients-grid"></div>
+        <div id="flavorText" class="flavor-text">Pick something tasty...</div>
+    </div>
+    
+    <div class="card">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+            <div>
+                <h3 style="font-size:1em; margin-bottom:8px; border-bottom:2px solid var(--java-brown); display:inline-block; transform:rotate(-2deg);">Preparation</h3>
+                <div class="options-grid" id="cookingMethodsGrid"></div>
+            </div>
+            <div>
+                <h3 style="font-size:1em; margin-bottom:8px; border-bottom:2px solid var(--java-brown); display:inline-block; transform:rotate(1deg);">Side Dish</h3>
+                <div class="options-grid" id="sidesGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="border-color: var(--clay-orange);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h2 id="sandwichTitle" style="font-size:1.4em; transform:rotate(-1deg);">YOUR ORDER</h2>
+            <button id="clearBtn" style="background:white; color:var(--clay-orange); border-color:var(--clay-orange); padding:6px 12px; font-size:0.8em; box-shadow:none;">CLEAR TRAY</button>
+        </div>
+        
+        <div id="sandwichStack"></div>
+        
+        <div class="action-buttons">
+            <button id="identifyBtn" class="btn-identify">Identify</button>
+            <button id="shareBtn" class="btn-share">Share</button>
+        </div>
+    </div>
+
+    <div id="identifyModal" class="modal">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h3>Kitchen Report</h3>
+                <button onclick="closeModal('identifyModal')" style="background:transparent; border:2px solid white; color:white; padding:4px 10px; border-radius:50%;">✕</button>
+            </div>
+            <div style="padding:16px;" id="identifyBody"></div>
+        </div>
+    </div>
+
+    <div id="menuModal" class="modal">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h3>Full Menu</h3>
+                <button onclick="closeModal('menuModal')" style="background:transparent; border:2px solid white; color:white; padding:4px 10px; border-radius:50%;">✕</button>
+            </div>
+            
+            <div class="menu-controls">
+                <button id="sortByCat" class="sort-btn active" onclick="setMenuSort('category')">By Style</button>
+                <button id="sortByAlpha" class="sort-btn" onclick="setMenuSort('alpha')">A - Z</button>
+            </div>
+
+            <div id="menuContent" style="padding-bottom:20px;"></div>
+        </div>
+    </div>
+
+    <div id="recipeModal" class="modal">
+        <div class="modal-window" style="max-width: 450px;">
+            <div class="modal-header" style="background:var(--mustard-yellow); color:var(--java-brown); border-color:var(--java-brown);">
+                <h3>Recipe Card</h3>
+                <button onclick="closeModal('recipeModal')" style="background:transparent; border:2px solid var(--java-brown); color:var(--java-brown); padding:4px 10px; border-radius:50%;">✕</button>
+            </div>
+            <div id="recipeContent" class="recipe-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════════════════════
+        // DATA & LOGIC
+        // ═══════════════════════════════════════════════════════════════════════════
+        
+        const ingredientsData = {
+            breads: [
+                { id: 'white_bread', name: 'White Bread', icon: '🍞', desc: 'Standard issue carbohydrate.' },
+                { id: 'wheat_bread', name: 'Wheat Bread', icon: '🍞', desc: 'Wholesome wheat.' },
+                { id: 'sourdough', name: 'Sourdough', icon: '🥖', desc: 'Tangy and chewy.' },
+                { id: 'rye_bread', name: 'Rye Bread', icon: '🥖', desc: 'Robust flavor.' },
+                { id: 'pumpernickel', name: 'Pumpernickel', icon: '🌑', desc: 'Dark rye.' },
+                { id: 'ciabatta', name: 'Ciabatta', icon: '🥖', desc: 'Italian slipper bread.' },
+                { id: 'focaccia', name: 'Focaccia', icon: '🌿', desc: 'Olive oil bread.' },
+                { id: 'baguette', name: 'Baguette', icon: '🥖', desc: 'Very long. Very French.' },
+                { id: 'brioche', name: 'Brioche', icon: '🧈', desc: 'Rich and buttery.' },
+                { id: 'challah', name: 'Challah', icon: '🥖', desc: 'Egg bread.' },
+                { id: 'pita', name: 'Pita', icon: '🫓', desc: 'Pocket bread.' },
+                { id: 'naan', name: 'Naan', icon: '🫓', desc: 'Indian flatbread.' },
+                { id: 'flatbread', name: 'Flatbread', icon: '🫓', desc: 'Simple flatbread.' },
+                { id: 'english_muffin', name: 'English Muffin', icon: '🥯', desc: 'Nooks and crannies.' },
+                { id: 'bagel', name: 'Bagel', icon: '🥯', desc: 'Boiled dough.' },
+                { id: 'croissant', name: 'Croissant', icon: '🥐', desc: 'Flaky pastry.' },
+                { id: 'kaiser_roll', name: 'Kaiser Roll', icon: '🥯', desc: 'Crisp crust roll.' },
+                { id: 'hoagie_roll', name: 'Hoagie Roll', icon: '🥖', desc: 'Long roll.' },
+                { id: 'sub_roll', name: 'Sub Roll', icon: '🥖', desc: 'Soft long roll.' },
+                { id: 'italian_roll', name: 'Italian Roll', icon: '🥖', desc: 'Substantial roll.' },
+                { id: 'french_bread', name: 'French Bread', icon: '🥖', desc: 'New Orleans style.' },
+                { id: 'cuban_bread', name: 'Cuban Bread', icon: '🥖', desc: 'Lard bread.' },
+                { id: 'pretzel_bun', name: 'Pretzel Bun', icon: '🥨', desc: 'Salty crust.' },
+                { id: 'hamburger_bun', name: 'Hamburger Bun', icon: '🍔', desc: 'Soft bun.' },
+                { id: 'hot_dog_bun', name: 'Hot Dog Bun', icon: '🌭', desc: 'Elongated bun.' },
+                { id: 'potato_bread', name: 'Potato Bread', icon: '🥔', desc: 'Soft and sweet.' },
+                { id: 'multigrain', name: 'Multigrain', icon: '🌾', desc: 'Healthy grains.' },
+                { id: 'gluten_free', name: 'Gluten-Free Bread', icon: '🚫', desc: 'No wheat.' },
+                { id: 'tortilla', name: 'Tortilla', icon: '🌯', desc: 'Corn or flour.' },
+                { id: 'wrap', name: 'Wrap', icon: '🌯', desc: 'Flour tortilla.' },
+                { id: 'lavash', name: 'Lavash', icon: '🫓', desc: 'Thin flatbread.' },
+                { id: 'telera_roll', name: 'Telera Roll', icon: '🥖', desc: 'Mexican roll.' },
+                { id: 'bolillo_roll', name: 'Bolillo Roll', icon: '🥖', desc: 'Savory roll.' },
+                { id: 'muffaletta_bread', name: 'Muffaletta Bread', icon: '🍞', desc: 'Round sesame.' },
+                { id: 'texas_toast', name: 'Texas Toast', icon: '🍞', desc: 'Thick slice.' },
+                { id: 'biscuit', name: 'Biscuit', icon: '🥯', desc: 'Buttermilk biscuit.' },
+                { id: 'cornbread', name: 'Cornbread', icon: '🌽', desc: 'Cornmeal bread.' },
+                { id: 'hard_roll', name: 'Hard Roll', icon: '🥯', desc: 'Firm crust.' },
+                { id: 'pancakes', name: 'Pancakes', icon: '🥞', desc: 'Griddle cakes.' },
+                { id: 'waffles', name: 'Waffles', icon: '🧇', desc: 'Crisp batter.' },
+                { id: 'graham_crackers', name: 'Graham Crackers', icon: '🍪', desc: 'Sweet cracker.' },
+                { id: 'cookies', name: 'Cookies', icon: '🍪', desc: 'Baked treat.' }
+            ],
+            meats: [
+                { id: 'turkey', name: 'Turkey', icon: '🦃', desc: 'Sliced turkey.' },
+                { id: 'ham', name: 'Ham', icon: '🍖', desc: 'Cured ham.' },
+                { id: 'roast_beef', name: 'Roast Beef', icon: '🥩', desc: 'Roast beef.' },
+                { id: 'pastrami', name: 'Pastrami', icon: '🥩', desc: 'Spiced beef.' },
+                { id: 'corned_beef', name: 'Corned Beef', icon: '🥩', desc: 'Salt beef.' },
+                { id: 'salami', name: 'Salami', icon: '🥓', desc: 'Cured sausage.' },
+                { id: 'pepperoni', name: 'Pepperoni', icon: '🍕', desc: 'Spicy sausage.' },
+                { id: 'prosciutto', name: 'Prosciutto', icon: '🍖', desc: 'Dry-cured ham.' },
+                { id: 'mortadella', name: 'Mortadella', icon: '🍖', desc: 'Italian sausage.' },
+                { id: 'bologna', name: 'Bologna', icon: '🍖', desc: 'Lunch meat.' },
+                { id: 'capicola', name: 'Capicola', icon: '🍖', desc: 'Spiced pork.' },
+                { id: 'chicken_breast', name: 'Chicken Breast', icon: '🍗', desc: 'White meat.' },
+                { id: 'grilled_chicken', name: 'Grilled Chicken', icon: '🍗', desc: 'Cooked chicken.' },
+                { id: 'fried_chicken', name: 'Fried Chicken', icon: '🍗', desc: 'Crispy chicken.' },
+                { id: 'rotisserie_chicken', name: 'Rotisserie Chicken', icon: '🍗', desc: 'Roasted chicken.' },
+                { id: 'bacon', name: 'Bacon', icon: '🥓', desc: 'Crispy strips.' },
+                { id: 'canadian_bacon', name: 'Canadian Bacon', icon: '🥓', desc: 'Lean bacon.' },
+                { id: 'turkey_bacon', name: 'Turkey Bacon', icon: '🥓', desc: 'Poultry bacon.' },
+                { id: 'pancetta', name: 'Pancetta', icon: '🥓', desc: 'Italian bacon.' },
+                { id: 'sausage', name: 'Sausage', icon: '🌭', desc: 'Ground meat.' },
+                { id: 'breakfast_sausage', name: 'Breakfast Sausage', icon: '🌭', desc: 'Morning sausage.' },
+                { id: 'italian_sausage', name: 'Italian Sausage', icon: '🌭', desc: 'Herbed sausage.' },
+                { id: 'chorizo', name: 'Chorizo', icon: '🌭', desc: 'Spicy sausage.' },
+                { id: 'bratwurst', name: 'Bratwurst', icon: '🌭', desc: 'German sausage.' },
+                { id: 'meatballs', name: 'Meatballs', icon: '🧆', desc: 'Seasoned beef.' },
+                { id: 'pulled_pork', name: 'Pulled Pork', icon: '🐷', desc: 'Shredded pork.' },
+                { id: 'bbq_pork', name: 'BBQ Pork', icon: '🐷', desc: 'Saucy pork.' },
+                { id: 'roast_pork', name: 'Roast Pork', icon: '🐷', desc: 'Roasted pork.' },
+                { id: 'pork_cutlet', name: 'Pork Cutlet', icon: '🐷', desc: 'Breaded pork.' },
+                { id: 'carnitas', name: 'Carnitas', icon: '🐷', desc: 'Mexican pork.' },
+                { id: 'carne_asada', name: 'Carne Asada', icon: '🥩', desc: 'Grilled beef.' },
+                { id: 'ribeye_steak', name: 'Ribeye Steak', icon: '🥩', desc: 'Prime cut.' },
+                { id: 'steak', name: 'Steak', icon: '🥩', desc: 'Beef steak.' },
+                { id: 'brisket', name: 'Brisket', icon: '🥩', desc: 'Smoked beef.' },
+                { id: 'ground_beef', name: 'Ground Beef', icon: '🥩', desc: 'Minced beef.' },
+                { id: 'hamburger_patty', name: 'Hamburger Patty', icon: '🍔', desc: 'Beef patty.' },
+                { id: 'lamb', name: 'Lamb', icon: '🍖', desc: 'Roast lamb.' },
+                { id: 'gyro_meat', name: 'Gyro Meat', icon: '🍖', desc: 'Spiced meat.' },
+                { id: 'hot_dog', name: 'Hot Dog', icon: '🌭', desc: 'Frankfurter.' },
+                { id: 'pork_roll', name: 'Pork Roll', icon: '🍥', desc: 'Jersey staple.' },
+                { id: 'country_ham', name: 'Country Ham', icon: '🍖', desc: 'Salt ham.' },
+                { id: 'serrano_ham', name: 'Serrano Ham', icon: '🍖', desc: 'Spanish ham.' }
+            ],
+            seafood: [
+                { id: 'tuna', name: 'Tuna', icon: '🐟', desc: 'Fish.' },
+                { id: 'tuna_salad', name: 'Tuna Salad', icon: '🥣', desc: 'Tuna mix.' },
+                { id: 'salmon', name: 'Salmon', icon: '🐟', desc: 'Rich fish.' },
+                { id: 'lox', name: 'Lox', icon: '🐟', desc: 'Cured salmon.' },
+                { id: 'smoked_salmon', name: 'Smoked Salmon', icon: '🐟', desc: 'Smoked fish.' },
+                { id: 'fried_shrimp', name: 'Fried Shrimp', icon: '🍤', desc: 'Crispy shrimp.' },
+                { id: 'shrimp', name: 'Shrimp', icon: '🍤', desc: 'Shellfish.' },
+                { id: 'lobster_meat', name: 'Lobster Meat', icon: '🦞', desc: 'Premium shellfish.' },
+                { id: 'crab_meat', name: 'Crab Meat', icon: '🦀', desc: 'Sweet meat.' },
+                { id: 'fried_oysters', name: 'Fried Oysters', icon: '🦪', desc: 'Crispy oysters.' },
+                { id: 'fried_fish', name: 'Fried Fish', icon: '🐟', desc: 'Battered fish.' },
+                { id: 'fried_catfish', name: 'Fried Catfish', icon: '🐟', desc: 'Southern fish.' },
+                { id: 'fish_fillet', name: 'Fish Fillet', icon: '🐟', desc: 'White fish.' },
+                { id: 'anchovies', name: 'Anchovies', icon: '🐟', desc: 'Salty fish.' }
+            ],
+            cheeses: [
+                { id: 'cheddar', name: 'Cheddar', icon: '🧀', desc: 'Sharp cheese.' },
+                { id: 'swiss', name: 'Swiss', icon: '🧀', desc: 'Holey cheese.' },
+                { id: 'american', name: 'American', icon: '🟨', desc: 'Melty cheese.' },
+                { id: 'provolone', name: 'Provolone', icon: '🧀', desc: 'Mild cheese.' },
+                { id: 'mozzarella', name: 'Mozzarella', icon: '🧀', desc: 'Pizza cheese.' },
+                { id: 'pepper_jack', name: 'Pepper Jack', icon: '🧀', desc: 'Spicy cheese.' },
+                { id: 'monterey_jack', name: 'Monterey Jack', icon: '🧀', desc: 'Mild cheese.' },
+                { id: 'muenster', name: 'Muenster', icon: '🧀', desc: 'Semi-soft cheese.' },
+                { id: 'havarti', name: 'Havarti', icon: '🧀', desc: 'Creamy cheese.' },
+                { id: 'gouda', name: 'Gouda', icon: '🧀', desc: 'Dutch cheese.' },
+                { id: 'smoked_gouda', name: 'Smoked Gouda', icon: '🧀', desc: 'Smokey cheese.' },
+                { id: 'brie', name: 'Brie', icon: '🧀', desc: 'Soft cheese.' },
+                { id: 'blue_cheese', name: 'Blue Cheese', icon: '🧀', desc: 'Pungent cheese.' },
+                { id: 'gorgonzola', name: 'Gorgonzola', icon: '🧀', desc: 'Italian blue.' },
+                { id: 'feta', name: 'Feta', icon: '🧀', desc: 'Salty cheese.' },
+                { id: 'goat_cheese', name: 'Goat Cheese', icon: '🧀', desc: 'Tart cheese.' },
+                { id: 'cream_cheese', name: 'Cream Cheese', icon: '⚪', desc: 'Spread cheese.' },
+                { id: 'parmesan', name: 'Parmesan', icon: '🧀', desc: 'Hard cheese.' },
+                { id: 'gruyere', name: 'Gruyere', icon: '🧀', desc: 'Swiss cheese.' },
+                { id: 'manchego', name: 'Manchego', icon: '🧀', desc: 'Sheep cheese.' },
+                { id: 'vegan_cheese', name: 'Vegan Cheese', icon: '🌱', desc: 'Plant cheese.' },
+                { id: 'queso_fresco', name: 'Queso Fresco', icon: '🧀', desc: 'Fresh crumble.' },
+                { id: 'cheese_sauce', name: 'Cheese Sauce', icon: '🫕', desc: 'Liquid cheese.' },
+                { id: 'pimento_cheese', name: 'Pimento Cheese', icon: '🧀', desc: 'Cheese spread.' }
+            ],
+            vegetables: [
+                { id: 'lettuce', name: 'Lettuce', icon: '🥬', desc: 'Crisp leaf.' },
+                { id: 'romaine', name: 'Romaine', icon: '🥬', desc: 'Sturdy leaf.' },
+                { id: 'arugula', name: 'Arugula', icon: '🌿', desc: 'Peppery greens.' },
+                { id: 'spinach', name: 'Spinach', icon: '🌿', desc: 'Tender greens.' },
+                { id: 'mixed_greens', name: 'Mixed Greens', icon: '🥗', desc: 'Salad mix.' },
+                { id: 'tomato', name: 'Tomato', icon: '🍅', desc: 'Juicy slice.' },
+                { id: 'sun_dried_tomato', name: 'Sun-Dried Tomatoes', icon: '🍅', desc: 'Intense tomato.' },
+                { id: 'cucumber', name: 'Cucumber', icon: '🥒', desc: 'Cool crunch.' },
+                { id: 'onion', name: 'Onion', icon: '🧅', desc: 'Sharp bulb.' },
+                { id: 'red_onion', name: 'Red Onion', icon: '🧅', desc: 'Mild onion.' },
+                { id: 'caramelized_onions', name: 'Caramelized Onions', icon: '🧅', desc: 'Sweet onion.' },
+                { id: 'grilled_onions', name: 'Grilled Onions', icon: '🧅', desc: 'Cooked onion.' },
+                { id: 'pickles', name: 'Pickles', icon: '🥒', desc: 'Sour crunch.' },
+                { id: 'dill_pickles', name: 'Dill Pickles', icon: '🥒', desc: 'Classic pickle.' },
+                { id: 'jalapeno', name: 'Jalapeño', icon: '🌶️', desc: 'Hot pepper.' },
+                { id: 'banana_peppers', name: 'Banana Peppers', icon: '🌶️', desc: 'Mild pepper.' },
+                { id: 'pepperoncini', name: 'Pepperoncini', icon: '🌶️', desc: 'Tangy pepper.' },
+                { id: 'bell_peppers', name: 'Bell Peppers', icon: '🫑', desc: 'Sweet pepper.' },
+                { id: 'roasted_red_peppers', name: 'Roasted Red Peppers', icon: '🫑', desc: 'Sweet soft pepper.' },
+                { id: 'mushrooms', name: 'Mushrooms', icon: '🍄', desc: 'Fungi.' },
+                { id: 'sauteed_mushrooms', name: 'Sautéed Mushrooms', icon: '🍄', desc: 'Cooked fungi.' },
+                { id: 'portobello', name: 'Portobello', icon: '🍄', desc: 'Big mushroom.' },
+                { id: 'avocado', name: 'Avocado', icon: '🥑', desc: 'Creamy fruit.' },
+                { id: 'guacamole', name: 'Guacamole', icon: '🥑', desc: 'Avocado dip.' },
+                { id: 'olives', name: 'Olives', icon: '🫒', desc: 'Salty fruit.' },
+                { id: 'black_olives', name: 'Black Olives', icon: '🫒', desc: 'Mild olive.' },
+                { id: 'kalamata_olives', name: 'Kalamata Olives', icon: '🫒', desc: 'Greek olive.' },
+                { id: 'olive_salad', name: 'Olive Salad', icon: '🥗', desc: 'Chopped olives.' },
+                { id: 'giardiniera', name: 'Giardiniera', icon: '🥕', desc: 'Pickled veggies.' },
+                { id: 'sprouts', name: 'Sprouts', icon: '🌱', desc: 'Fresh shoots.' },
+                { id: 'coleslaw', name: 'Coleslaw', icon: '🥗', desc: 'Cabbage mix.' },
+                { id: 'sauerkraut', name: 'Sauerkraut', icon: '🥬', desc: 'Fermented cabbage.' },
+                { id: 'kimchi', name: 'Kimchi', icon: '🥬', desc: 'Spicy cabbage.' },
+                { id: 'pickled_carrots', name: 'Pickled Carrots', icon: '🥕', desc: 'Tangy carrot.' },
+                { id: 'pickled_daikon', name: 'Pickled Daikon', icon: '⚪', desc: 'Tangy radish.' },
+                { id: 'cabbage', name: 'Cabbage', icon: '🥬', desc: 'Crunchy leaf.' },
+                { id: 'carrots', name: 'Carrots', icon: '🥕', desc: 'Sweet root.' },
+                { id: 'cilantro', name: 'Cilantro', icon: '🌿', desc: 'Fresh herb.' },
+                { id: 'basil', name: 'Basil', icon: '🌿', desc: 'Sweet herb.' },
+                { id: 'watercress', name: 'Watercress', icon: '🌿', desc: 'Peppery leaf.' },
+                { id: 'refried_beans', name: 'Refried Beans', icon: '🫘', desc: 'Bean paste.' },
+                { id: 'black_beans', name: 'Black Beans', icon: '🫘', desc: 'Whole beans.' },
+                { id: 'eggplant', name: 'Eggplant', icon: '🍆', desc: 'Purple fruit.' },
+                { id: 'breaded_eggplant', name: 'Breaded Eggplant', icon: '🍆', desc: 'Fried eggplant.' },
+                { id: 'zucchini', name: 'Zucchini', icon: '🥒', desc: 'Green squash.' }
+            ],
+            condiments: [
+                { id: 'mayo', name: 'Mayonnaise', icon: '🥣', desc: 'Creamy spread.' },
+                { id: 'mustard', name: 'Mustard', icon: '🟡', desc: 'Yellow spread.' },
+                { id: 'yellow_mustard', name: 'Yellow Mustard', icon: '🟡', desc: 'Classic yellow.' },
+                { id: 'dijon', name: 'Dijon Mustard', icon: '🟡', desc: 'Spicy mustard.' },
+                { id: 'honey_mustard', name: 'Honey Mustard', icon: '🍯', desc: 'Sweet mustard.' },
+                { id: 'spicy_mustard', name: 'Spicy Mustard', icon: '🟡', desc: 'Hot mustard.' },
+                { id: 'whole_grain_mustard', name: 'Whole Grain', icon: '🟡', desc: 'Textured mustard.' },
+                { id: 'ketchup', name: 'Ketchup', icon: '🍅', desc: 'Tomato sauce.' },
+                { id: 'bbq_sauce', name: 'BBQ Sauce', icon: '🟤', desc: 'Smokey sauce.' },
+                { id: 'hot_sauce', name: 'Hot Sauce', icon: '🌶️', desc: 'Spicy sauce.' },
+                { id: 'sriracha', name: 'Sriracha', icon: '🌶️', desc: 'Chili sauce.' },
+                { id: 'buffalo_sauce', name: 'Buffalo Sauce', icon: '🌶️', desc: 'Wing sauce.' },
+                { id: 'ranch', name: 'Ranch', icon: '🥣', desc: 'Herb dressing.' },
+                { id: 'italian_dressing', name: 'Italian Dressing', icon: '🥗', desc: 'Vinaigrette.' },
+                { id: 'caesar', name: 'Caesar', icon: '🥗', desc: 'Creamy dressing.' },
+                { id: 'thousand_island', name: 'Thousand Island', icon: '🟠', desc: 'Burger sauce.' },
+                { id: 'russian', name: 'Russian', icon: '🟠', desc: 'Spicy dressing.' },
+                { id: 'blue_cheese_dressing', name: 'Blue Cheese', icon: '🥣', desc: 'Funky dressing.' },
+                { id: 'aioli', name: 'Aioli', icon: '🥣', desc: 'Garlic mayo.' },
+                { id: 'garlic_aioli', name: 'Garlic Aioli', icon: '🧄', desc: 'Strong garlic.' },
+                { id: 'chipotle_mayo', name: 'Chipotle Mayo', icon: '🌶️', desc: 'Spicy mayo.' },
+                { id: 'garlic_mayo', name: 'Garlic Mayo', icon: '🧄', desc: 'Garlicky.' },
+                { id: 'pesto', name: 'Pesto', icon: '🌿', desc: 'Basil sauce.' },
+                { id: 'hummus', name: 'Hummus', icon: '🥣', desc: 'Chickpea spread.' },
+                { id: 'tahini', name: 'Tahini', icon: '🥣', desc: 'Sesame paste.' },
+                { id: 'tahini_sauce', name: 'Tahini Sauce', icon: '🥣', desc: 'Sesame sauce.' },
+                { id: 'tzatziki', name: 'Tzatziki', icon: '🥣', desc: 'Yogurt sauce.' },
+                { id: 'garlic_sauce', name: 'Garlic Sauce', icon: '🧄', desc: 'White sauce.' },
+                { id: 'horseradish', name: 'Horseradish', icon: '⚪', desc: 'Spicy root.' },
+                { id: 'horseradish_sauce', name: 'Horseradish Sauce', icon: '🥣', desc: 'Creamy spice.' },
+                { id: 'remoulade', name: 'Remoulade', icon: '🟠', desc: 'Cajun sauce.' },
+                { id: 'tartar_sauce', name: 'Tartar Sauce', icon: '⚪', desc: 'Fish sauce.' },
+                { id: 'olive_oil', name: 'Olive Oil', icon: '🫒', desc: 'Oil.' },
+                { id: 'oil_vinegar', name: 'Oil & Vinegar', icon: '🥗', desc: 'Classic mix.' },
+                { id: 'balsamic', name: 'Balsamic', icon: '⚫', desc: 'Dark vinegar.' },
+                { id: 'butter', name: 'Butter', icon: '🧈', desc: 'Churned cream.' },
+                { id: 'garlic_butter', name: 'Garlic Butter', icon: '🧈', desc: 'Flavor fat.' },
+                { id: 'bechamel', name: 'Bechamel', icon: '⚪', desc: 'White sauce.' },
+                { id: 'marinara', name: 'Marinara', icon: '🍅', desc: 'Red sauce.' },
+                { id: 'tonkatsu', name: 'Tonkatsu', icon: '🟤', desc: 'Japanese sauce.' },
+                { id: 'salsa', name: 'Salsa', icon: '🍅', desc: 'Tomato dip.' },
+                { id: 'chimichurri', name: 'Chimichurri', icon: '🌿', desc: 'Green sauce.' },
+                { id: 'cranberry_sauce', name: 'Cranberry Sauce', icon: '🔴', desc: 'Sweet sauce.' }
+            ],
+            extras: [
+                { id: 'salt', name: 'Salt', icon: '🧂', desc: 'Seasoning.' },
+                { id: 'pepper', name: 'Pepper', icon: '⚫', desc: 'Spice.' },
+                { id: 'oregano', name: 'Oregano', icon: '🌿', desc: 'Herb.' },
+                { id: 'italian_seasoning', name: 'Italian Seasoning', icon: '🌿', desc: 'Herb mix.' },
+                { id: 'red_pepper_flakes', name: 'Red Pepper Flakes', icon: '🌶️', desc: 'Heat.' },
+                { id: 'paprika', name: 'Paprika', icon: '🔴', desc: 'Red spice.' },
+                { id: 'garlic_powder', name: 'Garlic Powder', icon: '🧄', desc: 'Garlic dust.' },
+                { id: 'sesame_seeds', name: 'Sesame Seeds', icon: '⚫', desc: 'Seeds.' },
+                { id: 'fried_egg', name: 'Fried Egg', icon: '🍳', desc: 'Cooked egg.' },
+                { id: 'poached_egg', name: 'Poached Egg', icon: '🥚', desc: 'Soft egg.' },
+                { id: 'hard_boiled_eggs', name: 'Hard Boiled Eggs', icon: '🥚', desc: 'Solid egg.' },
+                { id: 'scrambled_eggs', name: 'Scrambled Eggs', icon: '🍳', desc: 'Mixed eggs.' },
+                { id: 'fries', name: 'Fries', icon: '🍟', desc: 'Potato sticks.' },
+                { id: 'french_fries', name: 'French Fries', icon: '🍟', desc: 'Potato sticks.' },
+                { id: 'home_fries', name: 'Home Fries', icon: '🥔', desc: 'Potato chunks.' },
+                { id: 'chips', name: 'Chips', icon: '🥔', desc: 'Crisps.' },
+                { id: 'potato_chips', name: 'Potato Chips', icon: '🥔', desc: 'Crisps.' },
+                { id: 'onion_rings', name: 'Onion Rings', icon: '🧅', desc: 'Fried rings.' },
+                { id: 'hash_browns', name: 'Hash Browns', icon: '🥔', desc: 'Fried potato.' },
+                { id: 'macaroni_salad', name: 'Macaroni Salad', icon: '🥣', desc: 'Pasta salad.' },
+                { id: 'apple_slices', name: 'Apple Slices', icon: '🍎', desc: 'Fruit.' },
+                { id: 'jam', name: 'Jam', icon: '🍓', desc: 'Fruit spread.' },
+                { id: 'jelly', name: 'Jelly', icon: '🍇', desc: 'Fruit spread.' },
+                { id: 'grape_jelly', name: 'Grape Jelly', icon: '🍇', desc: 'Purple jelly.' },
+                { id: 'strawberry_jam', name: 'Strawberry Jam', icon: '🍓', desc: 'Red jam.' },
+                { id: 'raspberry_jam', name: 'Raspberry Jam', icon: '🍇', desc: 'Berry jam.' },
+                { id: 'peanut_butter', name: 'Peanut Butter', icon: '🥜', desc: 'Nut spread.' },
+                { id: 'almond_butter', name: 'Almond Butter', icon: '🥜', desc: 'Nut spread.' },
+                { id: 'nutella', name: 'Nutella', icon: '🍫', desc: 'Choc spread.' },
+                { id: 'chocolate', name: 'Chocolate', icon: '🍫', desc: 'Sweet.' },
+                { id: 'marshmallow', name: 'Marshmallow', icon: '☁️', desc: 'Fluff.' },
+                { id: 'honey', name: 'Honey', icon: '🍯', desc: 'Sweet syrup.' },
+                { id: 'maple_syrup', name: 'Maple Syrup', icon: '🍁', desc: 'Tree syrup.' },
+                { id: 'capers', name: 'Capers', icon: '🟢', desc: 'Buds.' },
+                { id: 'lemon_juice', name: 'Lemon Juice', icon: '🍋', desc: 'Citrus.' },
+                { id: 'walnuts', name: 'Walnuts', icon: '🌰', desc: 'Nuts.' },
+                { id: 'falafel', name: 'Falafel', icon: '🧆', desc: 'Fried ball.' },
+                { id: 'veggie_patty', name: 'Veggie Patty', icon: '🌱', desc: 'Plant burger.' },
+                { id: 'vanilla_ice_cream', name: 'Vanilla Ice Cream', icon: '🍦', desc: 'Cold treat.' },
+                { id: 'banana', name: 'Banana', icon: '🍌', desc: 'Fruit.' },
+                { id: 'gravy', name: 'Gravy', icon: '🥣', desc: 'Savory sauce.' }
+            ]
+        };
+
+        const sandwichDatabase = [
+            { id: 1, name: "Classic BLT", category: "Classic American", bread: "White Bread", ingredients: ["Bacon", "Lettuce", "Tomato", "Mayonnaise"], cooking: "Toasted", side: "Chips" },
+            { id: 2, name: "Club Sandwich", category: "Classic American", bread: "White Bread", ingredients: ["Turkey", "Bacon", "Lettuce", "Tomato", "Mayonnaise"], cooking: "Toasted", side: "Fries" },
+            { id: 3, name: "Reuben", alt: ["Ruben"], category: "Classic American", bread: "Rye Bread", ingredients: ["Corned Beef", "Swiss Cheese", "Sauerkraut", "Thousand Island Dressing"], cooking: "Grilled", side: "Pickle" },
+            { id: 4, name: "Grilled Cheese", category: "Classic American", bread: "White Bread", ingredients: ["Cheddar Cheese", "Butter"], cooking: "Grilled", side: "Soup" },
+            { id: 5, name: "Peanut Butter & Jelly", category: "Classic American", bread: "White Bread", ingredients: ["Peanut Butter", "Grape Jelly"], cooking: "Cold", side: null },
+            { id: 6, name: "Tuna Salad Sandwich", category: "Classic American", bread: "White Bread", ingredients: ["Tuna", "Mayonnaise", "Celery", "Lettuce"], cooking: "Cold", side: "Chips" },
+            { id: 7, name: "Egg Salad Sandwich", category: "Classic American", bread: "White Bread", ingredients: ["Hard Boiled Eggs", "Mayonnaise", "Mustard", "Lettuce"], cooking: "Cold", side: "Chips" },
+            { id: 8, name: "Turkey & Swiss", category: "Classic American", bread: "Wheat Bread", ingredients: ["Turkey", "Swiss Cheese", "Lettuce", "Tomato", "Mayonnaise"], cooking: "Cold", side: "Chips" },
+            { id: 9, name: "Ham & Cheese", category: "Classic American", bread: "White Bread", ingredients: ["Ham", "Cheddar Cheese", "Lettuce", "Tomato", "Mustard"], cooking: "Cold", side: "Chips" },
+            { id: 10, name: "Roast Beef Sandwich", category: "Classic American", bread: "Hoagie Roll", ingredients: ["Roast Beef", "Provolone Cheese", "Lettuce", "Tomato", "Horseradish Sauce"], cooking: "Cold", side: "Chips" },
+            { id: 11, name: "Monte Cristo", category: "Classic American", bread: "White Bread", ingredients: ["Ham", "Turkey", "Swiss Cheese"], cooking: "Fried", side: "Jam" },
+            { id: 12, name: "Patty Melt", category: "Classic American", bread: "Rye Bread", ingredients: ["Ground Beef", "Swiss Cheese", "Caramelized Onions"], cooking: "Grilled", side: "Fries" },
+            { id: 13, name: "Philly Cheesesteak", category: "Regional American", bread: "Hoagie Roll", ingredients: ["Ribeye Steak", "Provolone Cheese", "Onions", "Bell Peppers"], cooking: "Grilled", side: "Fries" },
+            { id: 14, name: "French Dip", category: "Regional American", bread: "Hoagie Roll", ingredients: ["Roast Beef", "Provolone Cheese"], cooking: "Toasted", side: "Au Jus" },
+            { id: 15, name: "Italian Beef", category: "Regional American", bread: "Italian Roll", ingredients: ["Roast Beef", "Giardiniera", "Bell Peppers"], cooking: "Toasted", side: null },
+            { id: 16, name: "Po' Boy - Shrimp", category: "Regional American", bread: "French Bread", ingredients: ["Fried Shrimp", "Lettuce", "Tomato", "Pickles", "Remoulade"], cooking: "Fried", side: null },
+            { id: 17, name: "Po' Boy - Oyster", category: "Regional American", bread: "French Bread", ingredients: ["Fried Oysters", "Lettuce", "Tomato", "Pickles", "Remoulade"], cooking: "Fried", side: null },
+            { id: 18, name: "Lobster Roll - Maine", category: "Regional American", bread: "Hot Dog Bun", ingredients: ["Lobster Meat", "Mayonnaise", "Celery", "Lemon Juice", "Butter"], cooking: "Toasted", side: "Chips" },
+            { id: 19, name: "Lobster Roll - Connecticut", category: "Regional American", bread: "Hot Dog Bun", ingredients: ["Lobster Meat", "Butter", "Lemon Juice"], cooking: "Toasted", side: "Chips" },
+            { id: 20, name: "Pulled Pork Sandwich", category: "Regional American", bread: "Hamburger Bun", ingredients: ["Pulled Pork", "BBQ Sauce", "Coleslaw"], cooking: "Cold", side: "Fries" },
+            { id: 21, name: "Muffaletta", category: "Regional American", bread: "Muffaletta Bread", ingredients: ["Mortadella", "Salami", "Ham", "Provolone Cheese", "Olive Salad"], cooking: "Cold", side: null },
+            { id: 22, name: "Rachel Sandwich", category: "Regional American", bread: "Rye Bread", ingredients: ["Turkey", "Swiss Cheese", "Coleslaw", "Thousand Island Dressing"], cooking: "Grilled", side: "Pickle" },
+            { id: 23, name: "Cuban Sandwich", category: "International", bread: "Cuban Bread", ingredients: ["Roast Pork", "Ham", "Swiss Cheese", "Pickles", "Mustard"], cooking: "Panini", side: null },
+            { id: 24, name: "Croque Monsieur", category: "International", bread: "White Bread", ingredients: ["Ham", "Gruyere Cheese", "Bechamel Sauce"], cooking: "Baked", side: null },
+            { id: 25, name: "Croque Madame", category: "International", bread: "White Bread", ingredients: ["Ham", "Gruyere Cheese", "Bechamel Sauce", "Fried Egg"], cooking: "Baked", side: null },
+            { id: 26, name: "Banh Mi", category: "International", bread: "Baguette", ingredients: ["Pork", "Pickled Carrots", "Pickled Daikon", "Cucumber", "Cilantro", "Jalapeño", "Mayonnaise"], cooking: "Cold", side: null },
+            { id: 27, name: "Torta", category: "International", bread: "Telera Roll", ingredients: ["Carne Asada", "Refried Beans", "Avocado", "Lettuce", "Tomato", "Jalapeño", "Queso Fresco"], cooking: "Cold", side: null },
+            { id: 28, name: "Katsu Sando", category: "International", bread: "White Bread", ingredients: ["Pork Cutlet", "Cabbage", "Tonkatsu Sauce"], cooking: "Fried", side: null },
+            { id: 29, name: "Bocadillo", category: "International", bread: "Baguette", ingredients: ["Serrano Ham", "Manchego Cheese", "Tomato", "Olive Oil"], cooking: "Cold", side: null },
+            { id: 30, name: "Shawarma", category: "International", bread: "Pita", ingredients: ["Chicken", "Lettuce", "Tomato", "Pickles", "Tahini Sauce", "Garlic Sauce"], cooking: "Cold", side: null },
+            { id: 31, name: "Gyro", category: "International", bread: "Pita", ingredients: ["Lamb", "Lettuce", "Tomato", "Onion", "Tzatziki Sauce"], cooking: "Cold", side: null },
+            { id: 32, name: "Falafel Sandwich", category: "International", bread: "Pita", ingredients: ["Falafel", "Lettuce", "Tomato", "Cucumber", "Tahini Sauce"], cooking: "Fried", side: null },
+            { id: 33, name: "Sabich", category: "International", bread: "Pita", ingredients: ["Breaded Eggplant", "Hard Boiled Eggs", "Hummus", "Tahini Sauce", "Pickles"], cooking: "Fried", side: null },
+            { id: 34, name: "Doner Kebab", category: "International", bread: "Pita", ingredients: ["Lamb", "Cabbage", "Tomato", "Onion", "Garlic Sauce"], cooking: "Cold", side: null },
+            { id: 35, name: "Cemita", category: "International", bread: "Hamburger Bun", ingredients: ["Fried Chicken", "Avocado", "Queso Fresco", "Chipotle Mayo"], cooking: "Fried", side: null },
+            { id: 36, name: "Medianoche", category: "International", bread: "Brioche", ingredients: ["Roast Pork", "Ham", "Swiss Cheese", "Pickles", "Mustard"], cooking: "Panini", side: null },
+            { id: 37, name: "Francesinha", category: "International", bread: "White Bread", ingredients: ["Steak", "Ham", "Sausage", "Cheese Sauce", "Fried Egg"], cooking: "Baked", side: "Fries" },
+            { id: 38, name: "Smørrebrød", category: "International", bread: "Rye Bread", ingredients: ["Smoked Salmon", "Cream Cheese", "Capers"], cooking: "Open-Faced", side: null },
+            { id: 39, name: "Tramezzino", category: "International", bread: "White Bread", ingredients: ["Tuna", "Mayonnaise"], cooking: "Cold", side: null },
+            { id: 40, name: "Italian Sub", category: "Subs & Hoagies", bread: "Sub Roll", ingredients: ["Salami", "Ham", "Capicola", "Provolone Cheese", "Lettuce", "Tomato", "Onion", "Oil and Vinegar"], cooking: "Cold", side: "Chips" },
+            { id: 41, name: "Meatball Sub", category: "Subs & Hoagies", bread: "Sub Roll", ingredients: ["Meatballs", "Marinara Sauce", "Mozzarella Cheese", "Parmesan Cheese"], cooking: "Baked", side: "Marinara" },
+            { id: 42, name: "Chicken Parm Sub", category: "Subs & Hoagies", bread: "Sub Roll", ingredients: ["Fried Chicken", "Marinara Sauce", "Mozzarella Cheese", "Parmesan Cheese"], cooking: "Baked", side: "Marinara" },
+            { id: 43, name: "Steak & Cheese Sub", category: "Subs & Hoagies", bread: "Sub Roll", ingredients: ["Ribeye Steak", "American Cheese", "Onions", "Bell Peppers"], cooking: "Grilled", side: null },
+            { id: 44, name: "Turkey Sub", category: "Subs & Hoagies", bread: "Sub Roll", ingredients: ["Turkey", "Provolone Cheese", "Lettuce", "Tomato", "Mayonnaise"], cooking: "Cold", side: null },
+            { id: 45, name: "Veggie Sub", category: "Subs & Hoagies", bread: "Sub Roll", ingredients: ["Lettuce", "Tomato", "Cucumber", "Bell Peppers", "Onion", "Provolone Cheese", "Italian Dressing"], cooking: "Cold", side: null },
+            { id: 46, name: "Tuna Sub", category: "Subs & Hoagies", bread: "Sub Roll", ingredients: ["Tuna Salad", "Lettuce", "Tomato", "Cucumber"], cooking: "Cold", side: null },
+            { id: 47, name: "Buffalo Chicken Sub", category: "Subs & Hoagies", bread: "Sub Roll", ingredients: ["Fried Chicken", "Buffalo Sauce", "Blue Cheese Dressing", "Lettuce"], cooking: "Fried", side: "Ranch" },
+            { id: 48, name: "Pastrami Sub", category: "Subs & Hoagies", bread: "Sub Roll", ingredients: ["Pastrami", "Swiss Cheese", "Mustard", "Pickles"], cooking: "Toasted", side: null },
+            { id: 49, name: "Roast Beef Sub", category: "Subs & Hoagies", bread: "Sub Roll", ingredients: ["Roast Beef", "Provolone Cheese", "Lettuce", "Tomato", "Horseradish Sauce"], cooking: "Cold", side: null },
+            { id: 50, name: "Chicken Caesar Wrap", category: "Wraps", bread: "Tortilla", ingredients: ["Grilled Chicken", "Romaine", "Parmesan Cheese", "Caesar Dressing"], cooking: "Cold", side: null },
+            { id: 51, name: "Turkey Wrap", category: "Wraps", bread: "Tortilla", ingredients: ["Turkey", "Lettuce", "Tomato", "Swiss Cheese", "Ranch Dressing"], cooking: "Cold", side: null },
+            { id: 52, name: "Veggie Wrap", category: "Wraps", bread: "Tortilla", ingredients: ["Hummus", "Lettuce", "Tomato", "Cucumber", "Avocado", "Sprouts"], cooking: "Cold", side: null },
+            { id: 53, name: "BLT Wrap", category: "Wraps", bread: "Tortilla", ingredients: ["Bacon", "Lettuce", "Tomato", "Mayonnaise"], cooking: "Cold", side: null },
+            { id: 54, name: "Buffalo Chicken Wrap", category: "Wraps", bread: "Tortilla", ingredients: ["Fried Chicken", "Buffalo Sauce", "Lettuce", "Blue Cheese Dressing"], cooking: "Fried", side: null },
+            { id: 55, name: "Greek Wrap", category: "Wraps", bread: "Tortilla", ingredients: ["Grilled Chicken", "Feta Cheese", "Cucumber", "Tomato", "Kalamata Olives", "Tzatziki Sauce"], cooking: "Cold", side: null },
+            { id: 56, name: "Southwest Chicken Wrap", category: "Wraps", bread: "Tortilla", ingredients: ["Grilled Chicken", "Black Beans", "Lettuce", "Salsa"], cooking: "Cold", side: null },
+            { id: 57, name: "Tuna Wrap", category: "Wraps", bread: "Tortilla", ingredients: ["Tuna Salad", "Lettuce", "Tomato", "Cucumber"], cooking: "Cold", side: null },
+            { id: 58, name: "Hummus Veggie Wrap", category: "Wraps", bread: "Tortilla", ingredients: ["Hummus", "Spinach", "Roasted Red Peppers", "Cucumber", "Feta Cheese"], cooking: "Cold", side: null },
+            { id: 59, name: "Breakfast Burrito", category: "Wraps", bread: "Tortilla", ingredients: ["Scrambled Eggs", "Bacon", "Cheddar Cheese", "Salsa"], cooking: "Grilled", side: null },
+            { id: 60, name: "California Burger", category: "Burgers", bread: "Hamburger Bun", ingredients: ["Hamburger Patty", "Lettuce", "Tomato", "Onion", "Avocado", "Mayonnaise"], cooking: "Grilled", side: "Fries" },
+            { id: 61, name: "Bacon Cheeseburger", category: "Burgers", bread: "Hamburger Bun", ingredients: ["Hamburger Patty", "Bacon", "Cheddar Cheese", "Lettuce", "Tomato", "Pickles"], cooking: "Grilled", side: "Fries" },
+            { id: 62, name: "Mushroom Swiss Burger", category: "Burgers", bread: "Hamburger Bun", ingredients: ["Hamburger Patty", "Sautéed Mushrooms", "Swiss Cheese"], cooking: "Grilled", side: "Fries" },
+            { id: 63, name: "BBQ Bacon Burger", category: "Burgers", bread: "Hamburger Bun", ingredients: ["Hamburger Patty", "Bacon", "Cheddar Cheese", "Onion Rings", "BBQ Sauce"], cooking: "Grilled", side: "Fries" },
+            { id: 64, name: "Jalapeño Burger", category: "Burgers", bread: "Hamburger Bun", ingredients: ["Hamburger Patty", "Pepper Jack", "Jalapeño", "Lettuce", "Chipotle Mayo"], cooking: "Grilled", side: "Fries" },
+            { id: 65, name: "Turkey Burger", category: "Burgers", bread: "Hamburger Bun", ingredients: ["Turkey", "Lettuce", "Tomato", "Avocado", "Mayonnaise"], cooking: "Grilled", side: "Fries" },
+            { id: 66, name: "Veggie Burger", category: "Burgers", bread: "Hamburger Bun", ingredients: ["Veggie Patty", "Lettuce", "Tomato", "Onion", "Pickles", "Mustard"], cooking: "Grilled", side: "Fries" },
+            { id: 67, name: "Black Bean Burger", category: "Burgers", bread: "Hamburger Bun", ingredients: ["Black Beans", "Lettuce", "Tomato", "Avocado", "Chipotle Mayo"], cooking: "Grilled", side: "Fries" },
+            { id: 68, name: "Double Cheeseburger", category: "Burgers", bread: "Hamburger Bun", ingredients: ["Hamburger Patty", "Hamburger Patty", "American Cheese", "Lettuce", "Tomato", "Onion"], cooking: "Grilled", side: "Fries" },
+            { id: 69, name: "Juicy Lucy", category: "Burgers", bread: "Hamburger Bun", ingredients: ["Hamburger Patty", "American Cheese", "Pickles", "Onion", "Mustard"], cooking: "Grilled", side: "Fries" },
+            { id: 70, name: "Sloppy Joe", category: "Hot Sandwiches", bread: "Hamburger Bun", ingredients: ["Ground Beef", "Tomato", "Onion", "Bell Peppers"], cooking: "Cold", side: "Fries" },
+            { id: 71, name: "Hot Brown", category: "Hot Sandwiches", bread: "Texas Toast", ingredients: ["Turkey", "Bacon", "Tomato", "Cheese Sauce"], cooking: "Open-Faced", side: null },
+            { id: 72, name: "Beef on Weck", category: "Hot Sandwiches", bread: "Kaiser Roll", ingredients: ["Roast Beef", "Horseradish"], cooking: "Toasted", side: "Au Jus" },
+            { id: 73, name: "BBQ Brisket Sandwich", category: "Hot Sandwiches", bread: "Hamburger Bun", ingredients: ["Brisket", "BBQ Sauce", "Pickles", "Onion"], cooking: "Cold", side: "Coleslaw" },
+            { id: 74, name: "Nashville Hot Chicken", category: "Hot Sandwiches", bread: "Hamburger Bun", ingredients: ["Fried Chicken", "Hot Sauce", "Pickles", "Coleslaw"], cooking: "Fried", side: "Fries" },
+            { id: 75, name: "Fried Chicken Sandwich", category: "Hot Sandwiches", bread: "Brioche", ingredients: ["Fried Chicken", "Pickles", "Mayonnaise"], cooking: "Fried", side: "Fries" },
+            { id: 76, name: "Crispy Chicken Sandwich", category: "Hot Sandwiches", bread: "Hamburger Bun", ingredients: ["Fried Chicken", "Lettuce", "Tomato", "Mayonnaise"], cooking: "Fried", side: "Fries" },
+            { id: 77, name: "Grilled Chicken Sandwich", category: "Hot Sandwiches", bread: "Hamburger Bun", ingredients: ["Grilled Chicken", "Lettuce", "Tomato", "Mayonnaise"], cooking: "Grilled", side: "Fries" },
+            { id: 78, name: "BBQ Chicken Sandwich", category: "Hot Sandwiches", bread: "Hamburger Bun", ingredients: ["Grilled Chicken", "BBQ Sauce", "Coleslaw", "Pickles"], cooking: "Grilled", side: null },
+            { id: 79, name: "Fish Sandwich", category: "Hot Sandwiches", bread: "Hamburger Bun", ingredients: ["Fried Fish", "Tartar Sauce", "Lettuce"], cooking: "Fried", side: "Fries" },
+            { id: 80, name: "Breakfast Sandwich", category: "Breakfast", bread: "English Muffin", ingredients: ["Fried Egg", "Bacon", "American Cheese"], cooking: "Grilled", side: null },
+            { id: 81, name: "Egg McMuffin Style", category: "Breakfast", bread: "English Muffin", ingredients: ["Fried Egg", "Canadian Bacon", "American Cheese"], cooking: "Grilled", side: null },
+            { id: 82, name: "Sausage Egg & Cheese", category: "Breakfast", bread: "Hamburger Bun", ingredients: ["Breakfast Sausage", "Fried Egg", "American Cheese"], cooking: "Grilled", side: null },
+            { id: 83, name: "Bacon Egg & Cheese", category: "Breakfast", bread: "Kaiser Roll", ingredients: ["Bacon", "Fried Egg", "American Cheese"], cooking: "Grilled", side: null },
+            { id: 84, name: "Ham Egg & Cheese", category: "Breakfast", bread: "Croissant", ingredients: ["Ham", "Fried Egg", "Swiss Cheese"], cooking: "Grilled", side: null },
+            { id: 85, name: "Bagel with Lox", category: "Breakfast", bread: "Bagel", ingredients: ["Lox", "Cream Cheese", "Capers", "Red Onion", "Tomato"], cooking: "Cold", side: null },
+            { id: 86, name: "Breakfast BLT", category: "Breakfast", bread: "Sourdough", ingredients: ["Bacon", "Fried Egg", "Lettuce", "Tomato", "Mayonnaise"], cooking: "Toasted", side: null },
+            { id: 87, name: "Avocado Toast Sandwich", category: "Breakfast", bread: "Sourdough", ingredients: ["Avocado", "Fried Egg", "Red Pepper Flakes", "Salt"], cooking: "Toasted", side: null },
+            { id: 88, name: "French Toast Sandwich", category: "Breakfast", bread: "Texas Toast", ingredients: ["Bacon", "Fried Egg", "American Cheese", "Maple Syrup"], cooking: "Grilled", side: null },
+            { id: 89, name: "Chorizo Breakfast", category: "Breakfast", bread: "Telera Roll", ingredients: ["Chorizo", "Scrambled Eggs", "Queso Fresco", "Salsa"], cooking: "Grilled", side: null },
+            { id: 90, name: "Caprese Sandwich", category: "Vegetarian", bread: "Ciabatta", ingredients: ["Mozzarella Cheese", "Tomato", "Basil", "Balsamic Vinegar", "Olive Oil"], cooking: "Cold", side: null },
+            { id: 91, name: "Grilled Vegetable Panini", category: "Vegetarian", bread: "Ciabatta", ingredients: ["Zucchini", "Eggplant", "Bell Peppers", "Goat Cheese", "Pesto"], cooking: "Panini", side: null },
+            { id: 92, name: "Portobello Sandwich", category: "Vegetarian", bread: "Ciabatta", ingredients: ["Portobello Mushroom", "Roasted Red Peppers", "Goat Cheese", "Arugula", "Balsamic Vinegar"], cooking: "Grilled", side: null },
+            { id: 93, name: "Eggplant Parm Sandwich", category: "Vegetarian", bread: "Italian Roll", ingredients: ["Breaded Eggplant", "Marinara Sauce", "Mozzarella Cheese", "Parmesan Cheese"], cooking: "Baked", side: "Marinara" },
+            { id: 94, name: "Grilled Cheese with Tomato", category: "Vegetarian", bread: "Sourdough", ingredients: ["Cheddar Cheese", "Tomato", "Butter"], cooking: "Grilled", side: "Soup" },
+            { id: 95, name: "Hummus Veggie Sandwich", category: "Vegetarian", bread: "Wheat Bread", ingredients: ["Hummus", "Cucumber", "Tomato", "Spinach", "Red Onion", "Feta Cheese"], cooking: "Cold", side: null },
+            { id: 96, name: "Avocado Veggie Sandwich", category: "Vegetarian", bread: "Multigrain", ingredients: ["Avocado", "Cucumber", "Sprouts", "Tomato", "Lettuce", "Cream Cheese"], cooking: "Cold", side: null },
+            { id: 97, name: "Mediterranean Veggie", category: "Vegetarian", bread: "Pita", ingredients: ["Hummus", "Feta Cheese", "Cucumber", "Tomato", "Kalamata Olives", "Red Onion"], cooking: "Cold", side: null },
+            { id: 98, name: "Spinach Artichoke Panini", category: "Vegetarian", bread: "Ciabatta", ingredients: ["Spinach", "Mozzarella Cheese", "Parmesan Cheese"], cooking: "Panini", side: null },
+            { id: 99, name: "Brie & Apple Sandwich", category: "Vegetarian", bread: "Baguette", ingredients: ["Brie", "Apple Slices", "Arugula", "Honey", "Walnuts"], cooking: "Cold", side: null },
+            { id: 100, name: "Dagwood Sandwich", category: "Celebrity & Fun", bread: "White Bread", ingredients: ["Turkey", "Ham", "Roast Beef", "Salami", "Bologna", "Swiss Cheese", "American Cheese", "Lettuce", "Tomato", "Onion", "Pickles", "Mustard", "Mayonnaise"], cooking: "Cold", side: null },
+            { id: 101, name: "Elvis Sandwich", category: "Celebrity & Fun", bread: "White Bread", ingredients: ["Peanut Butter", "Bacon", "Banana", "Honey"], cooking: "Grilled", side: null },
+            { id: 102, name: "Shooter's Sandwich", category: "Celebrity & Fun", bread: "Sourdough", ingredients: ["Ribeye Steak", "Mushrooms", "Onion", "Mustard", "Horseradish"], cooking: "Pressed", side: null },
+            { id: 103, name: "Fool's Gold Loaf", category: "Celebrity & Fun", bread: "Sourdough", ingredients: ["Peanut Butter", "Grape Jelly", "Bacon"], cooking: "Baked", side: null },
+            { id: 104, name: "Fluffernutter", category: "Celebrity & Fun", bread: "White Bread", ingredients: ["Peanut Butter", "Marshmallow"], cooking: "Cold", side: null },
+            { id: 105, name: "Chip Butty", category: "Celebrity & Fun", bread: "White Bread", ingredients: ["French Fries", "Butter"], cooking: "Cold", side: null },
+            { id: 106, name: "Toast Sandwich", category: "Celebrity & Fun", bread: "White Bread", ingredients: ["Butter", "Salt", "Pepper"], cooking: "Toasted", side: null },
+            { id: 107, name: "Gatsby Sandwich", category: "Celebrity & Fun", bread: "Hoagie Roll", ingredients: ["French Fries", "Steak", "Onion"], cooking: "Cold", side: null },
+            { id: 108, name: "Hot Dog", category: "Celebrity & Fun", bread: "Hot Dog Bun", ingredients: ["Hot Dog", "Mustard", "Ketchup", "Onion"], cooking: "Grilled", side: "Fries" },
+            { id: 109, name: "Italian Grilled Cheese", category: "Grilled Cheese Variants", bread: "Italian Roll", ingredients: ["Mozzarella Cheese", "Provolone Cheese", "Tomato", "Basil", "Pesto"], cooking: "Grilled", side: "Marinara" },
+            { id: 110, name: "Bacon Grilled Cheese", category: "Grilled Cheese Variants", bread: "Sourdough", ingredients: ["Cheddar Cheese", "American Cheese", "Bacon"], cooking: "Grilled", side: "Soup" },
+            { id: 111, name: "Jalapeño Popper Grilled Cheese", category: "Grilled Cheese Variants", bread: "Sourdough", ingredients: ["Cream Cheese", "Cheddar Cheese", "Jalapeño", "Bacon"], cooking: "Grilled", side: null },
+            { id: 112, name: "French Onion Grilled Cheese", category: "Grilled Cheese Variants", bread: "French Bread", ingredients: ["Gruyere Cheese", "Caramelized Onions"], cooking: "Grilled", side: "Au Jus" },
+            { id: 113, name: "Pizza Grilled Cheese", category: "Grilled Cheese Variants", bread: "Italian Roll", ingredients: ["Mozzarella Cheese", "Pepperoni", "Marinara Sauce"], cooking: "Grilled", side: "Marinara" },
+            { id: 114, name: "Tuna Melt", category: "Grilled Cheese Variants", bread: "Rye Bread", ingredients: ["Tuna Salad", "Cheddar Cheese", "Tomato"], cooking: "Grilled", side: null },
+            { id: 115, name: "Turkey Melt", category: "Grilled Cheese Variants", bread: "Sourdough", ingredients: ["Turkey", "Swiss Cheese", "Tomato", "Avocado"], cooking: "Grilled", side: null },
+            { id: 116, name: "Crab Melt", category: "Grilled Cheese Variants", bread: "Sourdough", ingredients: ["Crab Meat", "Swiss Cheese", "Mayonnaise"], cooking: "Grilled", side: null },
+            { id: 117, name: "California BLT", category: "BLT Variants", bread: "Sourdough", ingredients: ["Bacon", "Lettuce", "Tomato", "Avocado", "Mayonnaise"], cooking: "Toasted", side: null },
+            { id: 118, name: "BLAT", category: "BLT Variants", bread: "White Bread", ingredients: ["Bacon", "Lettuce", "Avocado", "Tomato", "Mayonnaise"], cooking: "Toasted", side: null },
+            { id: 119, name: "BLT with Egg", category: "BLT Variants", bread: "Sourdough", ingredients: ["Bacon", "Lettuce", "Tomato", "Fried Egg", "Mayonnaise"], cooking: "Toasted", side: null },
+            { id: 120, name: "Turkey BLT", category: "BLT Variants", bread: "Wheat Bread", ingredients: ["Turkey", "Bacon", "Lettuce", "Tomato", "Mayonnaise"], cooking: "Toasted", side: null },
+            { id: 121, name: "Chipotle BLT", category: "BLT Variants", bread: "Ciabatta", ingredients: ["Bacon", "Lettuce", "Tomato", "Chipotle Mayo"], cooking: "Toasted", side: null },
+            { id: 122, name: "Pesto BLT", category: "BLT Variants", bread: "Focaccia", ingredients: ["Bacon", "Lettuce", "Tomato", "Mozzarella Cheese", "Pesto"], cooking: "Toasted", side: null },
+            { id: 123, name: "BLT Grilled Cheese", category: "BLT Variants", bread: "Sourdough", ingredients: ["Bacon", "Lettuce", "Tomato", "Cheddar Cheese", "Mayonnaise"], cooking: "Grilled", side: null },
+            { id: 124, name: "Lobster BLT", category: "BLT Variants", bread: "Brioche", ingredients: ["Bacon", "Lettuce", "Tomato", "Lobster Meat", "Mayonnaise"], cooking: "Toasted", side: null },
+            { id: 125, name: "Club BLT", category: "BLT Variants", bread: "White Bread", ingredients: ["Bacon", "Lettuce", "Tomato", "Turkey", "Ham", "Mayonnaise"], cooking: "Toasted", side: null },
+            { id: 126, name: "New York Deli", category: "Deli Classics", bread: "Rye Bread", ingredients: ["Pastrami", "Swiss Cheese", "Mustard", "Pickles"], cooking: "Toasted", side: "Pickle" },
+            { id: 127, name: "Carnegie Deli Special", category: "Deli Classics", bread: "Rye Bread", ingredients: ["Pastrami", "Corned Beef", "Mustard"], cooking: "Toasted", side: "Pickle" },
+            { id: 128, name: "Brisket Sandwich", category: "Deli Classics", bread: "Rye Bread", ingredients: ["Brisket", "Mustard", "Pickles"], cooking: "Cold", side: null },
+            { id: 129, name: "Whitefish Salad Bagel", category: "Deli Classics", bread: "Bagel", ingredients: ["Fish Fillet", "Mayonnaise", "Lettuce", "Tomato", "Red Onion"], cooking: "Cold", side: null },
+            { id: 130, name: "Salami & Eggs on Roll", category: "Deli Classics", bread: "Kaiser Roll", ingredients: ["Salami", "Scrambled Eggs"], cooking: "Grilled", side: null },
+            { id: 131, name: "Nova Scotia Bagel", category: "Deli Classics", bread: "Bagel", ingredients: ["Smoked Salmon", "Cream Cheese", "Red Onion", "Capers", "Tomato"], cooking: "Cold", side: null },
+            { id: 132, name: "Pan Bagnat", category: "International Classics", bread: "Kaiser Roll", ingredients: ["Tuna", "Hard Boiled Eggs", "Anchovies", "Tomato", "Olives", "Olive Oil"], cooking: "Cold", side: null },
+            { id: 133, name: "Jambon-Beurre", category: "International Classics", bread: "Baguette", ingredients: ["Ham", "Butter"], cooking: "Cold", side: null },
+            { id: 134, name: "Chivito", category: "International Classics", bread: "Hamburger Bun", ingredients: ["Steak", "Ham", "Bacon", "Mozzarella Cheese", "Fried Egg", "Lettuce", "Tomato", "Mayonnaise"], cooking: "Grilled", side: "Fries" },
+            { id: 135, name: "Choripan", category: "International Classics", bread: "Hoagie Roll", ingredients: ["Chorizo", "Chimichurri"], cooking: "Grilled", side: null },
+            { id: 136, name: "Vada Pav", category: "International Classics", bread: "Hamburger Bun", ingredients: ["Veggie Patty", "Garlic Sauce"], cooking: "Fried", side: null },
+            { id: 137, name: "Yakisoba Pan", category: "International Classics", bread: "Hot Dog Bun", ingredients: ["Cabbage", "Tonkatsu Sauce"], cooking: "Cold", side: null },
+            { id: 138, name: "Tamago Sando", category: "International Classics", bread: "White Bread", ingredients: ["Hard Boiled Eggs", "Mayonnaise"], cooking: "Cold", side: null },
+            { id: 139, name: "Fruit Sando", category: "International Classics", bread: "White Bread", ingredients: ["Cream Cheese", "Apple Slices"], cooking: "Cold", side: null },
+            { id: 140, name: "Döner Sandwich", category: "International Classics", bread: "Pita", ingredients: ["Gyro Meat", "Lettuce", "Tomato", "Onion", "Tzatziki Sauce"], cooking: "Cold", side: null },
+            { id: 141, name: "Primanti Bros Style", category: "Regional Specialties", bread: "Italian Roll", ingredients: ["Capicola", "Provolone Cheese", "Coleslaw", "French Fries", "Tomato"], cooking: "Grilled", side: null },
+            { id: 142, name: "Chicago Italian Beef", category: "Regional Specialties", bread: "Italian Roll", ingredients: ["Roast Beef", "Giardiniera", "Bell Peppers"], cooking: "Toasted", side: null },
+            { id: 143, name: "Milwaukee Bratwurst", category: "Regional Specialties", bread: "Hoagie Roll", ingredients: ["Bratwurst", "Sauerkraut", "Mustard", "Onion"], cooking: "Grilled", side: null },
+            { id: 144, name: "Detroit Coney Dog", category: "Regional Specialties", bread: "Hot Dog Bun", ingredients: ["Hot Dog", "Ground Beef", "Mustard", "Onion"], cooking: "Grilled", side: null },
+            { id: 145, name: "Loose Meat Sandwich", category: "Regional Specialties", bread: "Hamburger Bun", ingredients: ["Ground Beef", "Pickles", "Onion", "Mustard"], cooking: "Cold", side: null },
+            { id: 146, name: "Kentucky Hot Brown", category: "Regional Specialties", bread: "Texas Toast", ingredients: ["Turkey", "Bacon", "Cheese Sauce", "Tomato", "Parmesan Cheese"], cooking: "Open-Faced", side: null },
+            { id: 147, name: "Iowa Tenderloin", category: "Regional Specialties", bread: "Hamburger Bun", ingredients: ["Pork Cutlet", "Pickles", "Onion", "Mustard"], cooking: "Fried", side: "Fries" },
+            { id: 148, name: "Nebraska Runza", category: "Regional Specialties", bread: "White Bread", ingredients: ["Ground Beef", "Cabbage", "Onion"], cooking: "Baked", side: null },
+            { id: 149, name: "Rachel (Turkey Reuben)", category: "Reuben Variants", bread: "Rye Bread", ingredients: ["Turkey", "Swiss Cheese", "Coleslaw", "Russian Dressing"], cooking: "Grilled", side: "Pickle" },
+            { id: 150, name: "California Reuben", category: "Reuben Variants", bread: "Rye Bread", ingredients: ["Turkey", "Avocado", "Swiss Cheese", "Coleslaw", "Thousand Island Dressing"], cooking: "Grilled", side: null },
+            { id: 151, name: "Cuban Reuben", category: "Reuben Variants", bread: "Cuban Bread", ingredients: ["Roast Pork", "Swiss Cheese", "Pickles", "Mustard", "Coleslaw"], cooking: "Panini", side: null },
+            { id: 152, name: "Pizza Reuben", category: "Reuben Variants", bread: "Italian Roll", ingredients: ["Pepperoni", "Mozzarella Cheese", "Sauerkraut", "Marinara Sauce"], cooking: "Grilled", side: null },
+            { id: 153, name: "Montreal Smoked Meat", category: "Reuben Variants", bread: "Rye Bread", ingredients: ["Pastrami", "Mustard"], cooking: "Toasted", side: "Pickle" },
+            { id: 154, name: "Midnight Reuben", category: "Reuben Variants", bread: "Pumpernickel", ingredients: ["Pastrami", "Swiss Cheese", "Sauerkraut", "Russian Dressing"], cooking: "Grilled", side: null },
+            { id: 155, name: "Reuben Melt", category: "Reuben Variants", bread: "Rye Bread", ingredients: ["Corned Beef", "Swiss Cheese", "Sauerkraut", "Russian Dressing", "Butter"], cooking: "Grilled", side: null },
+            { id: 156, name: "Pastrami Reuben", category: "Reuben Variants", bread: "Rye Bread", ingredients: ["Pastrami", "Swiss Cheese", "Sauerkraut", "Thousand Island Dressing"], cooking: "Grilled", side: "Pickle" },
+            { id: 157, name: "Jibarito", category: "Regional American", bread: "White Bread", ingredients: ["Steak", "Lettuce", "Tomato", "Garlic Mayo"], cooking: "Fried", side: null },
+            { id: 158, name: "Taylor Ham Egg Cheese", category: "Regional American", bread: "Hard Roll", ingredients: ["Pork Roll", "Fried Egg", "American Cheese"], cooking: "Grilled", side: null },
+            { id: 159, name: "Pork Tenderloin", category: "Regional American", bread: "Hamburger Bun", ingredients: ["Pork Cutlet", "Lettuce", "Tomato", "Onion", "Pickles", "Mustard"], cooking: "Fried", side: "Fries" },
+            { id: 160, name: "Horseshoe Sandwich", category: "Regional American", bread: "White Bread", ingredients: ["Hamburger Patty", "Fries", "Cheese Sauce"], cooking: "Open-Faced", side: null },
+            { id: 161, name: "St. Paul Sandwich", category: "Regional American", bread: "White Bread", ingredients: ["Fried Egg", "Lettuce", "Tomato", "Pickles", "Mayonnaise"], cooking: "Cold", side: null },
+            { id: 162, name: "Gerber Sandwich", category: "Regional American", bread: "Italian Roll", ingredients: ["Ham", "Garlic Butter", "Mozzarella Cheese"], cooking: "Baked", side: null },
+            { id: 163, name: "Grinder", category: "Regional American", bread: "Italian Roll", ingredients: ["Salami", "Capicola", "Ham", "Provolone Cheese", "Lettuce", "Tomato", "Onion", "Oil and Vinegar"], cooking: "Cold", side: "Chips" },
+            { id: 164, name: "Hoagie", category: "Regional American", bread: "Hoagie Roll", ingredients: ["Salami", "Ham", "Provolone Cheese", "Lettuce", "Tomato", "Onion", "Oil and Vinegar"], cooking: "Cold", side: "Chips" },
+            { id: 165, name: "Hero", category: "Regional American", bread: "Italian Roll", ingredients: ["Salami", "Ham", "Capicola", "Provolone Cheese", "Lettuce", "Tomato", "Onion", "Oil and Vinegar"], cooking: "Cold", side: "Chips" },
+            { id: 166, name: "Spiedie", category: "Regional American", bread: "Italian Roll", ingredients: ["Grilled Chicken", "Onion", "Bell Peppers"], cooking: "Grilled", side: null },
+            { id: 167, name: "Italian Sausage Sandwich", category: "Subs & Hoagies", bread: "Hoagie Roll", ingredients: ["Italian Sausage", "Marinara Sauce", "Mozzarella Cheese"], cooking: "Grilled", side: null },
+            { id: 168, name: "Eggplant Parm Sub", category: "Subs & Hoagies", bread: "Hoagie Roll", ingredients: ["Breaded Eggplant", "Marinara Sauce", "Mozzarella Cheese", "Parmesan Cheese"], cooking: "Baked", side: "Marinara" },
+            { id: 169, name: "Shrimp Parm Sub", category: "Subs & Hoagies", bread: "Hoagie Roll", ingredients: ["Fried Shrimp", "Marinara Sauce", "Mozzarella Cheese", "Parmesan Cheese"], cooking: "Baked", side: "Marinara" },
+            { id: 170, name: "Pepper & Egg Sandwich", category: "Breakfast", bread: "Italian Roll", ingredients: ["Bell Peppers", "Scrambled Eggs"], cooking: "Grilled", side: null },
+            { id: 171, name: "Steak & Egg Sandwich", category: "Breakfast", bread: "Hoagie Roll", ingredients: ["Ribeye Steak", "Fried Egg", "American Cheese"], cooking: "Grilled", side: null },
+            { id: 172, name: "Western Omelette", category: "Breakfast", bread: "White Bread", ingredients: ["Scrambled Eggs", "Ham", "Bell Peppers", "Onion", "Cheddar Cheese"], cooking: "Grilled", side: null },
+            { id: 173, name: "McGriddle Style", category: "Breakfast", bread: "Pancakes", ingredients: ["Breakfast Sausage", "Fried Egg", "American Cheese", "Maple Syrup"], cooking: "Grilled", side: null },
+            { id: 174, name: "Lox & Cream Cheese Bagel", category: "Breakfast", bread: "Bagel", ingredients: ["Lox", "Cream Cheese", "Red Onion", "Capers", "Tomato"], cooking: "Cold", side: null },
+            { id: 175, name: "Tomato Sandwich", category: "Southern", bread: "White Bread", ingredients: ["Tomato", "Mayonnaise", "Salt", "Pepper"], cooking: "Cold", side: null },
+            { id: 176, name: "Fried Bologna Sandwich", category: "Southern", bread: "White Bread", ingredients: ["Bologna", "American Cheese", "Mustard"], cooking: "Fried", side: "Chips" },
+            { id: 177, name: "Comeback Chicken Sandwich", category: "Southern", bread: "Hamburger Bun", ingredients: ["Fried Chicken", "Mayonnaise", "Pickles", "Coleslaw"], cooking: "Fried", side: "Fries" },
+            { id: 178, name: "Fried Catfish Sandwich", category: "Southern", bread: "White Bread", ingredients: ["Fried Catfish", "Coleslaw", "Pickles", "Tartar Sauce"], cooking: "Fried", side: "Fries" },
+            { id: 179, name: "Country Ham Biscuit", category: "Southern", bread: "Biscuit", ingredients: ["Country Ham", "Butter"], cooking: "Grilled", side: null },
+            { id: 180, name: "Sausage Biscuit", category: "Southern", bread: "Biscuit", ingredients: ["Breakfast Sausage", "Butter"], cooking: "Grilled", side: null },
+            { id: 181, name: "Fried Chicken Biscuit", category: "Southern", bread: "Biscuit", ingredients: ["Fried Chicken", "Butter", "Honey"], cooking: "Fried", side: null },
+            { id: 182, name: "Pimento Cheese Sandwich", category: "Southern", bread: "White Bread", ingredients: ["Pimento Cheese", "Lettuce"], cooking: "Cold", side: null },
+            { id: 183, name: "BBQ Pulled Chicken", category: "Southern", bread: "Hamburger Bun", ingredients: ["Grilled Chicken", "BBQ Sauce", "Coleslaw"], cooking: "Cold", side: "Fries" },
+            { id: 184, name: "Shrimp Po' Boy", category: "Southern", bread: "French Bread", ingredients: ["Fried Shrimp", "Lettuce", "Tomato", "Pickles", "Remoulade"], cooking: "Fried", side: null },
+            { id: 185, name: "Oyster Po' Boy", category: "Southern", bread: "French Bread", ingredients: ["Fried Oysters", "Lettuce", "Tomato", "Pickles", "Remoulade"], cooking: "Fried", side: null },
+            { id: 186, name: "Catfish Po' Boy", category: "Southern", bread: "French Bread", ingredients: ["Fried Catfish", "Lettuce", "Tomato", "Pickles", "Remoulade"], cooking: "Fried", side: null },
+            { id: 187, name: "Roast Beef Po' Boy", category: "Southern", bread: "French Bread", ingredients: ["Roast Beef", "Lettuce", "Tomato", "Mayonnaise"], cooking: "Cold", side: null },
+            { id: 188, name: "Muffuletta Half", category: "Southern", bread: "Muffaletta Bread", ingredients: ["Mortadella", "Salami", "Ham", "Provolone Cheese", "Olive Salad"], cooking: "Cold", side: null },
+            { id: 189, name: "Hot Sausage Po' Boy", category: "Southern", bread: "French Bread", ingredients: ["Italian Sausage", "Lettuce", "Tomato", "Mayonnaise"], cooking: "Grilled", side: null },
+            { id: 190, name: "Debris Po' Boy", category: "Southern", bread: "French Bread", ingredients: ["Roast Beef", "Gravy"], cooking: "Cold", side: null },
+            { id: 191, name: "Soft Shell Crab Po' Boy", category: "Southern", bread: "French Bread", ingredients: ["Crab Meat", "Lettuce", "Tomato", "Remoulade"], cooking: "Fried", side: null },
+            { id: 192, name: "Crawfish Po' Boy", category: "Southern", bread: "French Bread", ingredients: ["Shrimp", "Lettuce", "Tomato", "Remoulade"], cooking: "Fried", side: null },
+            { id: 193, name: "Cochon de Lait Po' Boy", category: "Southern", bread: "French Bread", ingredients: ["Pulled Pork", "Coleslaw", "Pickles"], cooking: "Cold", side: null },
+            { id: 194, name: "Fried Green Tomato Po' Boy", category: "Southern", bread: "French Bread", ingredients: ["Tomato", "Lettuce", "Remoulade"], cooking: "Fried", side: null },
+            { id: 195, name: "Cuban Medianoche", category: "International", bread: "Brioche", ingredients: ["Roast Pork", "Ham", "Swiss Cheese", "Pickles", "Mustard"], cooking: "Panini", side: null },
+            { id: 196, name: "Mitraillette", category: "International", bread: "Baguette", ingredients: ["Hamburger Patty", "French Fries", "Mayonnaise"], cooking: "Fried", side: null },
+            { id: 197, name: "Bocadillo de Calamares", category: "International", bread: "Baguette", ingredients: ["Fried Fish", "Mayonnaise", "Lemon Juice"], cooking: "Fried", side: null },
+            { id: 198, name: "Ice Cream Sandwich", category: "Casual & Fun", bread: "Cookies", ingredients: ["Vanilla Ice Cream"], cooking: "Cold", side: null },
+            { id: 199, name: "S'mores Sandwich", category: "Casual & Fun", bread: "Graham Crackers", ingredients: ["Chocolate", "Marshmallow"], cooking: "Grilled", side: null },
+            { id: 200, name: "Scooby Snack", category: "Casual & Fun", bread: "Hamburger Bun", ingredients: ["ALL CATEGORIES"], cooking: "Cold", side: null },
+            { id: 201, name: "Peanut Butter & Honey", category: "Casual & Fun", bread: "White Bread", ingredients: ["Peanut Butter", "Honey"], cooking: "Cold", side: null },
+            { id: 202, name: "PB&J with Chips", category: "Casual & Fun", bread: "White Bread", ingredients: ["Peanut Butter", "Grape Jelly", "Chips"], cooking: "Cold", side: null },
+            { id: 203, name: "Peanut Butter Banana", category: "Casual & Fun", bread: "White Bread", ingredients: ["Peanut Butter", "Banana"], cooking: "Cold", side: null },
+            { id: 204, name: "Grilled PB&J", category: "Casual & Fun", bread: "White Bread", ingredients: ["Peanut Butter", "Grape Jelly", "Butter"], cooking: "Grilled", side: null },
+            { id: 205, name: "Peanut Butter & Bacon", category: "Casual & Fun", bread: "White Bread", ingredients: ["Peanut Butter", "Bacon"], cooking: "Toasted", side: null },
+            { id: 206, name: "Nutella Banana", category: "Casual & Fun", bread: "White Bread", ingredients: ["Nutella", "Banana"], cooking: "Cold", side: null },
+            { id: 207, name: "Grilled Nutella", category: "Casual & Fun", bread: "Brioche", ingredients: ["Nutella", "Butter"], cooking: "Grilled", side: null },
+            { id: 208, name: "Triple Decker PB&J", category: "Casual & Fun", bread: "White Bread", ingredients: ["Peanut Butter", "Grape Jelly", "Strawberry Jam"], cooking: "Cold", side: null }
+        ];
+
+        const cookingMethods = [
+            { name: 'Cold', emoji: '❄️' },
+            { name: 'Grilled', emoji: '🔥' },
+            { name: 'Toasted', emoji: '🍞' },
+            { name: 'Panini', emoji: '🥖' },
+            { name: 'Fried', emoji: '🍳' },
+            { name: 'Baked', emoji: '♨️' },
+            { name: 'Melted', emoji: '🧈' },
+            { name: 'Open-Faced', emoji: '🍽️' },
+            { name: 'Pressed', emoji: '⬇️' }
+        ];
+
+        const sides = [
+            { name: 'None', emoji: '❌' },
+            { name: 'Jam', emoji: '🍓' },
+            { name: 'Maple Syrup', emoji: '🍁' },
+            { name: 'Au Jus', emoji: '🥣' },
+            { name: 'Marinara', emoji: '🍅' },
+            { name: 'Ranch', emoji: '🥛' },
+            { name: 'Honey Mustard', emoji: '🍯' },
+            { name: 'BBQ Sauce', emoji: '🍖' },
+            { name: 'Buffalo Sauce', emoji: '🌶️' },
+            { name: 'Chips', emoji: '🥔' },
+            { name: 'Fries', emoji: '🍟' },
+            { name: 'Coleslaw', emoji: '🥗' },
+            { name: 'Pickle', emoji: '🥒' },
+            { name: 'Soup', emoji: '🍲' }
+        ];
+
+        let sandwichStack = []; 
+        let currentCategory = 'breads';
+        let autoBreadEnabled = true;
+        let selectedCookingMethod = null;
+        let selectedSide = null;
+        let currentSandwichName = null;
+        let currentMenuSort = 'category'; // 'category' or 'alpha'
+        
+        const nameToIdMap = new Map();
+        let knownSandwiches = [];
+
+        function init() {
+            initDatabaseIds();
+            document.getElementById('sandwichCount').textContent = `${knownSandwiches.length} RECIPES BREWED`;
+            renderCategoryTabs();
+            renderIngredients(currentCategory);
+            renderCookingMethods();
+            renderSides();
+            renderSandwichStack();
+
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
+            document.getElementById('ingredientFilter').addEventListener('input', handleIngredientFilter);
+            document.getElementById('clearBtn').addEventListener('click', clearSandwich);
+            document.getElementById('identifyBtn').addEventListener('click', identifySandwich);
+            document.getElementById('shareBtn').addEventListener('click', shareSandwich);
+            
+            document.getElementById('autoBreadToggle').addEventListener('change', (e) => {
+                autoBreadEnabled = e.target.checked;
+                renderSandwichStack();
+            });
+            document.getElementById('identifyModal').addEventListener('click', (e) => {
+                if (e.target.id === 'identifyModal') closeModal('identifyModal');
+            });
+            document.getElementById('menuModal').addEventListener('click', (e) => {
+                if (e.target.id === 'menuModal') closeModal('menuModal');
+            });
+             document.getElementById('recipeModal').addEventListener('click', (e) => {
+                if (e.target.id === 'recipeModal') closeModal('recipeModal');
+            });
+            document.getElementById('openMenuBtn').addEventListener('click', openMenu);
+        }
+
+        function initDatabaseIds() {
+            Object.values(ingredientsData).forEach(category => {
+                category.forEach(item => {
+                    nameToIdMap.set(item.name.toLowerCase(), item.id);
+                });
+            });
+
+            knownSandwiches = sandwichDatabase.map(s => {
+                const ingredientIds = s.ingredients.map(ingName => {
+                    let id = nameToIdMap.get(ingName.toLowerCase());
+                    if (!id) {
+                        for (const [name, foundId] of nameToIdMap.entries()) {
+                            if (ingName.toLowerCase().includes(name) || name.includes(ingName.toLowerCase())) {
+                                id = foundId;
+                                break;
+                            }
+                        }
+                    }
+                    return id || 'UNKNOWN';
+                }).filter(id => id !== 'UNKNOWN');
+
+                let breadId = nameToIdMap.get(s.bread.toLowerCase());
+                if (!breadId) breadId = 'white_bread'; 
+
+                return {
+                    ...s,
+                    _ingredientIds: ingredientIds,
+                    _breadId: breadId
+                };
+            });
+        }
+
+        function renderCategoryTabs() {
+            const tabs = document.getElementById('categoryTabs');
+            const names = { breads: 'Breads', meats: 'Meats', seafood: 'Sea', cheeses: 'Cheese', vegetables: 'Veg', condiments: 'Sauce', extras: 'Extras' };
+            tabs.innerHTML = Object.entries(names).map(([key, label]) =>
+                `<button class="tab-button ${key === currentCategory ? 'active' : ''}" onclick="setCategory('${key}')">${label}</button>`
+            ).join('');
+        }
+
+        function setCategory(category) {
+            currentCategory = category;
+            renderCategoryTabs();
+            renderIngredients(category);
+            document.getElementById('ingredientFilter').value = '';
+        }
+
+        function renderIngredients(category) {
+            const grid = document.getElementById('ingredientsGrid');
+            grid.innerHTML = ingredientsData[category].map(item =>
+                `<div class="ingredient-item ${category}" 
+                      data-name="${item.name.toLowerCase()}" 
+                      onmouseover="showFlavorText('${item.desc.replace(/'/g, "\\'")}')"
+                      onclick="addIngredient('${item.id}', '${category}')">
+                    <div style="font-size:1.8em; margin-bottom:4px;">${item.icon}</div>
+                    <div>${item.name}</div>
+                </div>`
+            ).join('');
+        }
+
+        function showFlavorText(text) {
+            document.getElementById('flavorText').textContent = text;
+        }
+
+        function handleIngredientFilter(e) {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('#ingredientsGrid .ingredient-item').forEach(item => {
+                const name = item.getAttribute('data-name');
+                item.classList.toggle('hidden', !name.includes(query));
+            });
+        }
+
+        function renderCookingMethods() {
+            const grid = document.getElementById('cookingMethodsGrid');
+            grid.innerHTML = cookingMethods.map(m =>
+                `<div class="option-item ${selectedCookingMethod === m.name ? 'selected' : ''}" onclick="selectCookingMethod('${m.name}')">${m.emoji} ${m.name}</div>`
+            ).join('');
+        }
+
+        function selectCookingMethod(name) {
+            selectedCookingMethod = selectedCookingMethod === name ? null : name;
+            renderCookingMethods();
+        }
+
+        function renderSides() {
+            const grid = document.getElementById('sidesGrid');
+            grid.innerHTML = sides.map(s =>
+                `<div class="option-item ${selectedSide === s.name ? 'selected-side' : ''}" onclick="selectSide('${s.name}')">${s.emoji} ${s.name}</div>`
+            ).join('');
+        }
+
+        function selectSide(name) {
+            selectedSide = (selectedSide === name || name === 'None') ? null : name;
+            renderSides();
+        }
+
+        function addIngredient(id, category) {
+            const item = ingredientsData[category].find(i => i.id === id);
+            if (!item) return;
+
+            if (autoBreadEnabled && category !== 'breads' && sandwichStack.length === 0) {
+                const bread = ingredientsData.breads[0];
+                sandwichStack.push({ ...bread, category: 'breads' });
+            }
+            sandwichStack.push({ ...item, category });
+            renderSandwichStack();
+        }
+
+        function removeIngredient(index) {
+            sandwichStack.splice(index, 1);
+            renderSandwichStack();
+        }
+
+        function clearSandwich() {
+            sandwichStack = [];
+            selectedCookingMethod = null;
+            selectedSide = null;
+            currentSandwichName = null;
+            renderSandwichStack();
+            renderCookingMethods();
+            renderSides();
+        }
+
+        function renderSandwichStack() {
+            const container = document.getElementById('sandwichStack');
+            const clearBtn = document.getElementById('clearBtn');
+            const identifyBtn = document.getElementById('identifyBtn');
+            const shareBtn = document.getElementById('shareBtn');
+            const titleEl = document.getElementById('sandwichTitle');
+
+            titleEl.textContent = currentSandwichName ? currentSandwichName : 'YOUR ORDER';
+
+            if (sandwichStack.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:30px; color:#aaa; font-style:italic;">Add ingredients...</div>';
+                clearBtn.style.visibility = 'hidden';
+                return;
+            }
+
+            let displayStack = [...sandwichStack];
+            if (autoBreadEnabled) {
+                const hasTopBread = displayStack.length > 0 && displayStack[displayStack.length - 1].category === 'breads';
+                if (!hasTopBread) {
+                    const bottomBread = displayStack.find(item => item.category === 'breads');
+                    const breadToAdd = bottomBread || ingredientsData.breads[0];
+                    displayStack.push({ ...breadToAdd, isAuto: true });
+                }
+            }
+
+            container.innerHTML = `
+                <div class="sandwich-stack">
+                    ${displayStack.map((item, i) => `
+                        <div class="sandwich-layer">
+                            ${item.name}
+                            ${!item.isAuto ? `<button class="remove-btn" onclick="removeIngredient(${i})">✕</button>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            clearBtn.style.visibility = 'visible';
+        }
+
+        function identifySandwich() {
+            const modal = document.getElementById('identifyModal');
+            const modalBody = document.getElementById('identifyBody');
+            modal.classList.add('show');
+            modalBody.innerHTML = '<div style="text-align:center; padding:20px; font-style:italic;">Checking recipe book...</div>';
+
+            const userIds = sandwichStack
+                .filter(item => item.category !== 'breads')
+                .map(item => item.id);
+            
+            const matches = [];
+            const uniqueCats = new Set(sandwichStack.map(i => i.category).filter(c => c !== 'breads'));
+            const isScooby = uniqueCats.size >= 5 && sandwichStack.length >= 10;
+
+            if (isScooby) {
+                 matches.push({ special: true, name: "SCOOBY SNACK", desc: "Zoinks! That is a monster sandwich!", percent: 100 });
+            }
+
+            for (const sandwich of knownSandwiches) {
+                if (sandwich.name === 'Scooby Snack') continue;
+                
+                const dbIds = sandwich._ingredientIds;
+                if (dbIds.length === 0) continue;
+
+                let matchCount = 0;
+                const missingIds = [];
+                const userSet = new Set(userIds);
+                
+                dbIds.forEach(dbId => {
+                    if (userSet.has(dbId)) {
+                        matchCount++;
+                    } else {
+                        missingIds.push(dbId);
+                    }
+                });
+
+                const totalRequired = dbIds.length;
+                if (totalRequired === 0) continue;
+                
+                const percent = Math.round((matchCount / totalRequired) * 100);
+
+                if (percent >= 30) {
+                     matches.push({
+                         sandwich: sandwich,
+                         percent: percent,
+                         missingIds: missingIds,
+                         matchCount: matchCount,
+                         total: totalRequired
+                     });
+                }
+            }
+
+            matches.sort((a, b) => b.percent - a.percent);
+
+            setTimeout(() => {
+                if (matches.length === 0) {
+                    modalBody.innerHTML = `
+                        <div style="text-align:center; padding:20px;">
+                            <h4>Unique Creation</h4>
+                            <p style="color:#666;">This sandwich isn't on the menu.</p>
+                        </div>`;
+                } else {
+                    modalBody.innerHTML = matches.map(m => {
+                        if (m.special) {
+                            return `<div style="background:#FFF3E0; padding:12px; border:1px solid #FFCC80; margin-bottom:12px; text-align:center;">
+                                <strong>${m.name}</strong><br>${m.desc}
+                            </div>`;
+                        }
+                        
+                        let missingHtml = '';
+                        if (m.missingIds.length > 0) {
+                            const missingNames = m.missingIds.map(mid => {
+                                for (const cat in ingredientsData) {
+                                    const found = ingredientsData[cat].find(i => i.id === mid);
+                                    if (found) return found.name;
+                                }
+                                return "Unknown";
+                            });
+
+                            missingHtml = `
+                                <div style="font-size:0.85em; color:var(--clay-orange); margin-top:4px;">
+                                    Missing: ${missingNames.join(', ')}
+                                    <button onclick="addMissing('${m.sandwich.id}')" style="font-size:0.8em; padding:2px 8px; margin-left:8px;">Add</button>
+                                </div>
+                            `;
+                        }
+
+                        return `
+                            <div style="padding:10px; border-bottom:1px dotted var(--java-brown); margin-bottom:8px;">
+                                <div style="display:flex; justify-content:space-between;">
+                                    <strong>${m.sandwich.name}</strong>
+                                    <span>${m.percent}% Match</span>
+                                </div>
+                                ${missingHtml}
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }, 500);
+        }
+
+        function addMissing(sandwichDbId) {
+            const s = knownSandwiches.find(x => x.id == sandwichDbId);
+            if (!s) return;
+            
+            currentSandwichName = s.name;
+            const currentIds = new Set(sandwichStack.map(i => i.id));
+            
+            s._ingredientIds.forEach(id => {
+                if (!currentIds.has(id)) {
+                    for (const cat in ingredientsData) {
+                        const item = ingredientsData[cat].find(i => i.id === id);
+                        if (item) {
+                            sandwichStack.push({ ...item, category: cat });
+                            break;
+                        }
+                    }
+                }
+            });
+            
+            renderSandwichStack();
+            closeModal('identifyModal');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        function handleSearch(e) {
+            const query = e.target.value.toLowerCase().trim();
+            const results = document.getElementById('searchResults');
+            
+            if (!query) {
+                results.innerHTML = '';
+                results.classList.remove('active');
+                return;
+            }
+
+            const found = knownSandwiches.filter(s => s.name.toLowerCase().includes(query)).slice(0, 5);
+            
+            results.classList.add('active');
+            results.innerHTML = found.map(s => `
+                <div class="search-item" onclick="loadSandwich(${s.id})">
+                    ${s.name}
+                </div>
+            `).join('');
+        }
+
+        function loadSandwich(id) {
+            const s = knownSandwiches.find(x => x.id === id);
+            if (!s) return;
+            
+            sandwichStack = [];
+            currentSandwichName = s.name;
+            selectedCookingMethod = s._cooking;
+            selectedSide = s._side;
+            
+            let bread = ingredientsData.breads.find(b => b.id === s._breadId);
+            if (!bread) bread = ingredientsData.breads[0];
+            sandwichStack.push({ ...bread, category: 'breads' });
+
+            s._ingredientIds.forEach(ingId => {
+                for (const cat in ingredientsData) {
+                    const item = ingredientsData[cat].find(i => i.id === ingId);
+                    if (item) {
+                        sandwichStack.push({ ...item, category: cat });
+                        break;
+                    }
+                }
+            });
+
+            renderSandwichStack();
+            renderCookingMethods();
+            renderSides();
+            
+            // Clear UI
+            document.getElementById('searchResults').innerHTML = '';
+            document.getElementById('searchResults').classList.remove('active');
+            document.getElementById('searchInput').value = '';
+            closeModal('recipeModal');
+            closeModal('menuModal');
+        }
+
+        function shareSandwich() {
+            const names = sandwichStack.map(i => i.name).join(' + ');
+            const text = `Order for [${currentSandwichName || 'Table 1'}]: ${names}`;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Order copied to clipboard!");
+            });
+        }
+
+        // FULL MENU FUNCTIONS
+        function openMenu() {
+            const modal = document.getElementById('menuModal');
+            modal.classList.add('show');
+            renderMenuContent();
+        }
+        
+        function setMenuSort(type) {
+            currentMenuSort = type;
+            document.getElementById('sortByCat').classList.toggle('active', type === 'category');
+            document.getElementById('sortByAlpha').classList.toggle('active', type === 'alpha');
+            renderMenuContent();
+        }
+
+        function renderMenuContent() {
+            const content = document.getElementById('menuContent');
+            
+            if (currentMenuSort === 'alpha') {
+                // Sort Alphabetically
+                const sorted = [...knownSandwiches].sort((a, b) => a.name.localeCompare(b.name));
+                // Group by First Letter
+                let currentLetter = '';
+                let html = '<div class="menu-grid">';
+                
+                sorted.forEach(s => {
+                    const letter = s.name.charAt(0).toUpperCase();
+                    if (letter !== currentLetter) {
+                        currentLetter = letter;
+                        html += `<div class="alpha-header" style="grid-column: 1 / -1; margin-top:10px;">${currentLetter}</div>`;
+                    }
+                    html += `<div class="menu-item" onclick="showRecipe(${s.id})">
+                                <span>${s.name}</span>
+                            </div>`;
+                });
+                html += '</div>';
+                content.innerHTML = html;
+                
+            } else {
+                // Sort by Category
+                const categories = {};
+                knownSandwiches.forEach(s => {
+                    if (!categories[s.category]) categories[s.category] = [];
+                    categories[s.category].push(s);
+                });
+
+                content.innerHTML = Object.entries(categories).map(([cat, items]) => `
+                    <div style="background:var(--java-brown); color:var(--cream-paper); padding:8px 12px; margin-top:10px; font-weight:bold; border-radius:4px;">${cat}</div>
+                    <div class="menu-grid">
+                        ${items.map(item => `
+                            <div class="menu-item" onclick="showRecipe(${item.id})">
+                                <span>${item.name}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `).join('');
+            }
+        }
+
+        function showRecipe(id) {
+            const s = knownSandwiches.find(x => x.id === id);
+            const modal = document.getElementById('recipeModal');
+            const content = document.getElementById('recipeContent');
+            
+            modal.classList.add('show');
+            content.innerHTML = `
+                <div class="recipe-paper">
+                    <h2 style="font-family:'Trebuchet MS'; color:var(--clay-orange); margin-bottom:4px;">${s.name}</h2>
+                    <div style="font-style:italic; color:#666; margin-bottom:12px;">${s.category}</div>
+                    
+                    <div style="text-align:left; border-top:2px dashed var(--java-brown); border-bottom:2px dashed var(--java-brown); padding:10px 0;">
+                        <ul style="padding-left:20px; color:var(--java-brown);">
+                            <li style="font-weight:bold;">${s.bread}</li>
+                            ${s.ingredients.map(i => `<li>${i}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div style="margin-top:12px; font-size:0.9em; display:flex; justify-content:space-around;">
+                        <span>🔥 ${s.cooking}</span>
+                        <span>🥗 ${s.side || 'None'}</span>
+                    </div>
+                </div>
+
+                <button onclick="loadSandwich(${s.id})" style="width:100%; background:var(--clay-orange); color:white; border-radius:50px;">
+                    Make This Sandwich
+                </button>
+            `;
+        }
+
+        init();
+    </script>
+</body>
+</html>

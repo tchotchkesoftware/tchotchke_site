@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Tchotchke Software</title>
+    <style>
+        /* ═══════════════════════════════════════════════════════════════════════════
+           AESTHETIC: GEOCITIES "NEON CYBER-HOME" (circa 1998)
+           Less Windows 95 gray, more dark backgrounds and bright text.
+           ═══════════════════════════════════════════════════════════════════════════ */
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            /* Default text color: Hacker Green */
+            color: #00FF00; 
+            font-family: 'Verdana', 'Arial', sans-serif;
+            overflow-x: hidden;
+            text-align: center;
+        }
+
+        /* THE SPINNING FLOPPY BACKGROUND (Kept as requested) */
+        .floppy-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            /* Floppies made slightly more translucent for the dark theme */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg transform='rotate(0 50 50)'%3E%3Crect x='20' y='20' width='60' height='60' fill='%235555ff' stroke='%23ffffff' stroke-width='2' opacity='0.3'/%3E%3Crect x='35' y='20' width='30' height='20' fill='%23cccccc' opacity='0.3'/%3E%3Crect x='25' y='60' width='50' height='20' fill='%23ffffff' opacity='0.3'/%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.6;
+            animation: spinBg 25s linear infinite;
+        }
+
+        @keyframes spinBg {
+            from { background-position: 0 0; transform: rotate(0deg); }
+            to { background-position: 200px 200px; transform: rotate(5deg); }
+        }
+
+        /* MAIN CONTAINER */
+        .main-container {
+            width: 800px;
+            max-width: 90%;
+            margin: 30px auto;
+            /* Semi-transparent dark background */
+            background-color: rgba(0, 0, 40, 0.85);
+            /* Neon border instead of gray bevel */
+            border: 3px dashed #00FF00;
+            padding: 25px;
+            box-shadow: 0 0 20px #00FF00; /* Neon glow */
+        }
+
+        /* TYPOGRAPHY */
+        h1 {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 3em;
+            margin-bottom: 10px;
+            /* Intense neon glow */
+            text-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00, 0 0 30px #00FF00;
+        }
+
+        h2 {
+            background-color: #00FF00;
+            color: #000000;
+            display: inline-block;
+            padding: 5px 15px;
+            transform: skew(-10deg); /* Edgy tilt */
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            border: 2px solid #FFFFFF;
+        }
+
+        p { line-height: 1.5; font-size: 1.1em; }
+
+        /* LINKS - Hot Pink for contrast */
+        a { color: #FF00FF; text-decoration: underline; font-weight: bold; }
+        a:visited { color: #AA00AA; }
+        /* Blinking hover effect */
+        a:hover { color: #FFFFFF; background-color: #FF00FF; text-decoration: none; animation: blink 0.5s infinite; }
+
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        /* MARQUEE */
+        .marquee-container {
+            background-color: #FF00FF;
+            color: #FFFFFF;
+            border: 3px dotted #FFFFFF;
+            padding: 2px;
+            margin: 20px auto;
+            width: 80%;
+            font-weight: bold;
+        }
+
+        /* NAVIGATION LINKS (Simple pipes | separator) */
+        .nav-links {
+            margin: 20px 0;
+            font-size: 1.2em;
+        }
+        .nav-separator { color: #FFFFFF; margin: 0 10px; }
+
+        /* FUNKY HORIZONTAL RULE */
+        hr.funky {
+            border: 0;
+            height: 4px;
+            background-image: linear-gradient(to right, #000000, #00FF00, #FF00FF, #000000);
+            margin: 30px 0;
+        }
+
+        /* FEATURE BOXES */
+        .feature-box {
+            border: 2px solid #FFFFFF;
+            background: rgba(255, 0, 255, 0.1);
+            padding: 15px;
+            margin: 20px auto;
+            width: 80%;
+        }
+
+        /* IMAGES */
+        .construction-gif {
+            width: 100px;
+            height: auto;
+            border: 2px solid yellow;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="floppy-bg"></div>
+
+    <div class="main-container">
+        
+        <center>
+            <img src="https://web.archive.org/web/20090830082220/http://geocities.com/clipart/pbi/pictures/Templates/cooltext.gif" alt="COOL">
+            <br>
+            <h1>Tchotchke Software</h1>
+            <div style="color: white; font-family: monospace;">---==[ Welcome to the Digital Underground ]==---</div>
+        </center>
+
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <span class="nav-separator">|</span>
+            <a href="sandwich.html">Sandwich Machine</a> 
+            <span class="nav-separator">|</span>
+            <a href="#">RPG To-Do</a>
+            <span class="nav-separator">|</span>
+            <a href="#">Links</a>
+        </div>
+
+        <div class="marquee-container">
+            <marquee scrollamount="4">
+                Welcome to my homepage!! Don't forget to sign the guestbook! --- NEW: Sandwich Machine v1.0 RELEASED! --- Best viewed in Netscape 4.0
+            </marquee>
+        </div>
+
+        <hr class="funky">
+
+        <center>
+            <img src="https://web.archive.org/web/20091026193447/http://geocities.com/clipart/pbi/pictures/Templates/construction_yellow.gif" alt="Under Construction" class="construction-gif">
+            <p>Excuse the mess, this site is ALWAYS under construction!</p>
+        </center>
+
+        <p>Tchotchke Software is your home for weird digital toys and retro curiosities. We believe software should be FUN, not just useful.</p>
+
+        <hr class="funky">
+
+        <h2>LATEST RELEASES</h2>
+
+        <div class="feature-box">
+            <img src="https://web.archive.org/web/20091027064946/http://geocities.com/clipart/pbi/bullets/Templates/new_ani.gif" alt="NEW!">
+            <h3 style="color: #FFFFFF; margin: 5px 0;">THE GREAT SANDWICH MACHINE</h3>
+            <p>Is it a sandwich? We built a highly advanced algorithm (okay, it's just a list) to help you decide.</p>
+            <p>
+                👉 <a href="sandwich.html" style="font-size: 1.3em;">ENTER THE SANDWICH ZONE</a> 👈
+            </p>
+        </div>
+
+        <div class="feature-box" style="opacity: 0.6;">
+            <h3 style="color: #FFFFFF; margin: 5px 0;">FANTASY TO-DO RPG</h3>
+            <p>[COMING SOON] Turn boring chores into epic quests.</p>
+        </div>
+
+        <hr class="funky">
+
+        <div style="margin-top: 30px; font-size: 0.9em; color: #FFFFFF;">
+            <p>You are visitor number:</p>
+            <div style="border: 2px inset #00FF00; color: #00FF00; background: black; display: inline-block; padding: 2px 5px; font-family: monospace; font-size: 1.5em;">004821</div>
+            <br><br>
+            <img src="https://web.archive.org/web/20091027085123/http://geocities.com/clipart/pbi/buttons/Templates/ie_logo.gif" alt="IE Now">
+            <img src="https://web.archive.org/web/20091027051651/http://geocities.com/clipart/pbi/buttons/Templates/ns_logo.gif" alt="Netscape Now">
+            <br>
+            © 2025 Tchotchke Software.
+        </div>
+
+    </div>
+
+</body>
+</html>
