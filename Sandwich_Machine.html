@@ -5,16 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Great Sandwich Machine</title>
     <style>
-        /* ═══════════════════════════════════════════════════════════════════════════
-           AESTHETIC: GLOBAL VILLAGE JAVA HOUSE (Late 90s / Early 00s)
-           ═══════════════════════════════════════════════════════════════════════════ */
         :root {
             --java-brown: #3E2723;
             --clay-orange: #D84315;
             --mustard-yellow: #F9A825;
             --sage-green: #558B2F;
             --cream-paper: #FFF8E1;
-            --ink-black: #1a1a1a;
             
             /* The "Hand-Drawn" Border Radius Trick */
             --wobbly-border: 255px 15px 225px 15px / 15px 225px 15px 255px;
@@ -30,10 +26,9 @@
             padding-bottom: 120px;
             max-width: 800px;
             margin: 0 auto;
-            
-            /* CUSTOM SCRAWLED ART BACKGROUND */
             background-color: #EFEBE9;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30,20 Q40,5 50,20 T70,20' fill='none' stroke='%233E2723' stroke-width='3' stroke-linecap='round' opacity='0.2'/%3E%3Cpath d='M35,25 Q45,10 55,25 T75,25' fill='none' stroke='%233E2723' stroke-width='3' stroke-linecap='round' opacity='0.2'/%3E%3Ccircle cx='20' cy='80' r='8' fill='none' stroke='%233E2723' stroke-width='3' opacity='0.15'/%3E%3Cpath d='M15,80 L25,80' stroke='%233E2723' stroke-width='3' opacity='0.15'/%3E%3Cpath d='M80,80 Q90,70 80,60 Q70,70 80,80' fill='none' stroke='%233E2723' stroke-width='3' opacity='0.15'/%3E%3C/svg%3E");
+            /* Custom Scrawled Line Art Background */
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30,20 Q40,5 50,20 T70,20' fill='none' stroke='%233E2723' stroke-width='3' stroke-linecap='round' opacity='0.1'/%3E%3Cpath d='M35,25 Q45,10 55,25 T75,25' fill='none' stroke='%233E2723' stroke-width='3' stroke-linecap='round' opacity='0.1'/%3E%3Ccircle cx='20' cy='80' r='8' fill='none' stroke='%233E2723' stroke-width='3' opacity='0.1'/%3E%3Cpath d='M15,80 L25,80' stroke='%233E2723' stroke-width='3' opacity='0.1'/%3E%3Cpath d='M80,80 Q90,70 80,60 Q70,70 80,80' fill='none' stroke='%233E2723' stroke-width='3' opacity='0.1'/%3E%3C/svg%3E");
         }
 
         /* ------------------ UI COMPONENTS ------------------ */
@@ -49,7 +44,6 @@
             position: relative;
         }
 
-        /* Header Styling */
         .header { text-align: center; margin-bottom: 30px; margin-top: 20px; }
         .header h1 { 
             font-size: 2.5em; 
@@ -65,7 +59,7 @@
             background: var(--java-brown);
             color: var(--mustard-yellow);
             padding: 4px 12px;
-            border-radius: 15px 4px 12px 6px; /* Funky shape */
+            border-radius: 15px 4px 12px 6px;
             font-weight: bold;
             font-size: 0.9em;
             transform: rotate(1deg);
@@ -74,7 +68,6 @@
             box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
         }
 
-        /* Inputs */
         input[type="text"] {
             background: white;
             border: 3px solid var(--java-brown);
@@ -91,7 +84,6 @@
             border-color: var(--clay-orange);
         }
 
-        /* Funky Buttons */
         button {
             font-family: inherit;
             border: 3px solid var(--java-brown);
@@ -101,7 +93,7 @@
             cursor: pointer;
             font-weight: 900;
             text-transform: uppercase;
-            border-radius: 10px 4px 12px 5px; /* Organic corners */
+            border-radius: 10px 4px 12px 5px;
             box-shadow: 3px 3px 0px var(--java-brown);
             transition: all 0.1s;
         }
@@ -119,7 +111,6 @@
             border-radius: 4px 15px 5px 12px;
         }
 
-        /* Tabs */
         .tabs {
             display: flex;
             gap: 10px;
@@ -139,17 +130,15 @@
             transform: rotate(-1deg);
         }
 
-        /* Ingredients & Grid */
         .ingredients-grid, .options-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 12px;
             max-height: 350px;
             overflow-y: auto;
-            padding: 4px; /* Space for outlines */
+            padding: 4px;
         }
 
-        /* Item Cards */
         .ingredient-item, .option-item {
             border: 2px solid var(--java-brown);
             background: white;
@@ -173,7 +162,6 @@
             box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
         }
 
-        /* Flavor Text Bubble */
         .flavor-text {
             margin-top: 16px;
             background: white;
@@ -184,7 +172,6 @@
             font-style: italic;
             position: relative;
         }
-        /* Speech bubble tail */
         .flavor-text::after {
             content: '';
             position: absolute;
@@ -196,7 +183,6 @@
             width: 0;
         }
 
-        /* Sandwich Stack */
         .sandwich-stack { 
             display: flex; 
             flex-direction: column-reverse; 
@@ -207,7 +193,6 @@
             border: 3px solid var(--java-brown);
             border-radius: 4px;
             margin-bottom: 16px;
-            /* Sketchy background pattern */
             background-image: linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee), 
             linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee);
             background-size: 20px 20px;
@@ -246,11 +231,37 @@
             box-shadow: none;
         }
 
+        /* NEW: Styles for the Extras (Cooking/Side) tags */
+        .extras-display {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .extra-tag {
+            border: 2px solid var(--java-brown);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+        .tag-cooking {
+            background: var(--mustard-yellow);
+            color: var(--java-brown);
+            transform: rotate(-2deg);
+        }
+        .tag-side {
+            background: var(--clay-orange);
+            color: white;
+            transform: rotate(2deg);
+        }
+
         .action-buttons { display: flex; gap: 12px; }
         .btn-identify { flex: 2; background: var(--sage-green); color: white; }
         .btn-share { flex: 1; background: var(--mustard-yellow); }
 
-        /* Modals */
         .modal {
             display: none;
             position: fixed;
@@ -284,7 +295,6 @@
             border-bottom: 3px solid var(--java-brown);
         }
 
-        /* Menu Sorting */
         .menu-controls {
             padding: 12px;
             background: white;
@@ -332,7 +342,6 @@
             color: var(--java-brown);
         }
 
-        /* Recipe Card */
         .recipe-content { padding: 20px; text-align: center; }
         .recipe-paper {
             background: white;
@@ -342,7 +351,6 @@
             transform: rotate(1deg);
         }
 
-        /* Search Results */
         .search-results {
             background: white;
             border: 3px solid var(--java-brown);
@@ -407,6 +415,8 @@
         </div>
         
         <div id="sandwichStack"></div>
+        
+        <div id="extrasContainer"></div>
         
         <div class="action-buttons">
             <button id="identifyBtn" class="btn-identify">Identify</button>
@@ -934,6 +944,12 @@
             { id: 208, name: "Triple Decker PB&J", category: "Casual & Fun", bread: "White Bread", ingredients: ["Peanut Butter", "Grape Jelly", "Strawberry Jam"], cooking: "Cold", side: null }
         ];
 
+        // ------------------------------------------------------------------
+        // END OF DATABASE SECTION
+        // ------------------------------------------------------------------
+
+        // ... (Remaining Application Logic - Same as previous version)
+        
         const cookingMethods = [
             { name: 'Cold', emoji: '❄️' },
             { name: 'Grilled', emoji: '🔥' },
@@ -1087,6 +1103,7 @@
         function selectCookingMethod(name) {
             selectedCookingMethod = selectedCookingMethod === name ? null : name;
             renderCookingMethods();
+            renderSandwichStack(); // Update visual tags
         }
 
         function renderSides() {
@@ -1099,6 +1116,7 @@
         function selectSide(name) {
             selectedSide = (selectedSide === name || name === 'None') ? null : name;
             renderSides();
+            renderSandwichStack(); // Update visual tags
         }
 
         function addIngredient(id, category) {
@@ -1130,6 +1148,7 @@
 
         function renderSandwichStack() {
             const container = document.getElementById('sandwichStack');
+            const extrasContainer = document.getElementById('extrasContainer'); // NEW CONTAINER
             const clearBtn = document.getElementById('clearBtn');
             const identifyBtn = document.getElementById('identifyBtn');
             const shareBtn = document.getElementById('shareBtn');
@@ -1140,6 +1159,7 @@
             if (sandwichStack.length === 0) {
                 container.innerHTML = '<div style="text-align:center; padding:30px; color:#aaa; font-style:italic;">Add ingredients...</div>';
                 clearBtn.style.visibility = 'hidden';
+                extrasContainer.innerHTML = ''; // Clear extras
                 return;
             }
 
@@ -1153,6 +1173,7 @@
                 }
             }
 
+            // Render Ingredients Stack
             container.innerHTML = `
                 <div class="sandwich-stack">
                     ${displayStack.map((item, i) => `
@@ -1163,6 +1184,23 @@
                     `).join('')}
                 </div>
             `;
+
+            // NEW: Render Extras Tags (Cooking + Side)
+            let extrasHtml = '';
+            if (selectedCookingMethod || selectedSide) {
+                extrasHtml = '<div class="extras-display">';
+                if (selectedCookingMethod) {
+                    const methodObj = cookingMethods.find(m => m.name === selectedCookingMethod);
+                    extrasHtml += `<span class="extra-tag tag-cooking">${methodObj ? methodObj.emoji : ''} ${selectedCookingMethod}</span>`;
+                }
+                if (selectedSide) {
+                    const sideObj = sides.find(s => s.name === selectedSide);
+                    extrasHtml += `<span class="extra-tag tag-side">${sideObj ? sideObj.emoji : ''} ${selectedSide}</span>`;
+                }
+                extrasHtml += '</div>';
+            }
+            extrasContainer.innerHTML = extrasHtml;
+
             clearBtn.style.visibility = 'visible';
         }
 
@@ -1320,8 +1358,10 @@
             
             sandwichStack = [];
             currentSandwichName = s.name;
-            selectedCookingMethod = s._cooking;
-            selectedSide = s._side;
+            
+            // FIX: Removed the underscore (_) so it matches the database correctly
+            selectedCookingMethod = s.cooking; 
+            selectedSide = s.side;
             
             let bread = ingredientsData.breads.find(b => b.id === s._breadId);
             if (!bread) bread = ingredientsData.breads[0];
@@ -1337,11 +1377,12 @@
                 }
             });
 
+            // Update all parts of the UI
             renderSandwichStack();
-            renderCookingMethods();
-            renderSides();
+            renderCookingMethods(); // Now correctly highlights the method
+            renderSides();          // Now correctly highlights the side
             
-            // Clear UI
+            // Clear Search/Modals
             document.getElementById('searchResults').innerHTML = '';
             document.getElementById('searchResults').classList.remove('active');
             document.getElementById('searchInput').value = '';
@@ -1350,8 +1391,23 @@
         }
 
         function shareSandwich() {
-            const names = sandwichStack.map(i => i.name).join(' + ');
-            const text = `Order for [${currentSandwichName || 'Table 1'}]: ${names}`;
+            let text = "☕ TCHOTCHKE CAFÉ ORDER \n";
+            text += "━━━━━━━━━━━━━━━━━━━\n\n";
+
+            const stackForSharing = [...sandwichStack].reverse(); 
+            
+            stackForSharing.forEach(item => {
+                text += `${item.icon} ${item.name}\n`;
+            });
+
+            text += "\n━━━━━━━━━━━━━━━━━━━\n";
+            text += `🥪 "${currentSandwichName || 'Custom Creation'}"\n`;
+            
+            if (selectedCookingMethod) text += `🔥 ${selectedCookingMethod}  `;
+            if (selectedSide) text += `🥗 ${selectedSide}`;
+            
+            text += "\n\n🔗 Build yours: tchotchkesoftware.com";
+
             navigator.clipboard.writeText(text).then(() => {
                 alert("Order copied to clipboard!");
             });
