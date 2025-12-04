@@ -370,7 +370,7 @@
 
     <div class="header">
         <h1>☕ The Great Sandwich Machine</h1>
-        <div class="sandwich-count" id="sandwichCount">Brewing Data...</div>
+        <div class="sandwich-count" id="sandwichCount">Assembling Data...</div>
     </div>
 
     <div class="card">
@@ -992,7 +992,7 @@
 
         function init() {
             initDatabaseIds();
-            document.getElementById('sandwichCount').textContent = `${knownSandwiches.length} RECIPES BREWED`;
+            document.getElementById('sandwichCount').textContent = `${knownSandwiches.length} Sandwiches Assembled`;
             renderCategoryTabs();
             renderIngredients(currentCategory);
             renderCookingMethods();
