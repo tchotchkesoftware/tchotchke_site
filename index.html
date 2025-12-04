@@ -3,198 +3,717 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Tchotchke Software</title>
+    <title>~*~ Tchotchke Software ~*~ Welcome! ~*~</title>
     <style>
-        /* ═══════════════════════════════════════════════════════════════════════════
-           AESTHETIC: GEOCITIES "NEON CYBER-HOME" (circa 1998)
-           Less Windows 95 gray, more dark backgrounds and bright text.
-           ═══════════════════════════════════════════════════════════════════════════ */
-        
+        /* The classic 90s web experience */
         body {
+            background-color: #000033;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="10" cy="10" r="1" fill="%23ffffff" opacity="0.3"/><circle cx="50" cy="30" r="0.5" fill="%23ffffff" opacity="0.5"/><circle cx="80" cy="70" r="1" fill="%23ffffff" opacity="0.2"/><circle cx="30" cy="80" r="0.5" fill="%23ffffff" opacity="0.4"/><circle cx="70" cy="20" r="1" fill="%23ffffff" opacity="0.3"/><circle cx="20" cy="50" r="0.5" fill="%23ffffff" opacity="0.5"/><circle cx="90" cy="90" r="1" fill="%23ffffff" opacity="0.2"/></svg>');
+            color: #00ff00;
+            font-family: "Trebuchet MS", "Lucida Grande", "Verdana", sans-serif;
             margin: 0;
-            padding: 0;
-            background-color: #000000;
-            /* Default text color: Hacker Green */
-            color: #00FF00; 
-            font-family: 'Verdana', 'Arial', sans-serif;
-            overflow-x: hidden;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: linear-gradient(180deg, #1a0033 0%, #000066 50%, #1a0033 100%);
+            border: 3px ridge #9900ff;
+            padding: 20px;
+            box-shadow: 0 0 20px #ff00ff;
+        }
+
+        /* Classic decorative divider */
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #9966cc, #cc99ff, #9966cc, transparent);
+            margin: 20px 0;
+        }
+
+        /* Animated header */
+        .header {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .logo-text {
+            font-size: 48px;
+            font-weight: bold;
+            background: linear-gradient(180deg, #ff6600, #ffff00, #ff6600);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 0 #000;
+            animation: glow 1.5s ease-in-out infinite alternate;
+            font-family: "Impact", "Arial Black", sans-serif;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 5px #ff6600); }
+            to { filter: drop-shadow(0 0 20px #ffff00); }
+        }
+
+        .tagline {
+            color: #00ffff;
+            font-size: 18px;
+            margin-top: 10px;
+            animation: blink-subtle 2s ease-in-out infinite;
+        }
+
+        @keyframes blink-subtle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Marquee styling */
+        .marquee-container {
+            background: #330066;
+            border: 2px inset #9900ff;
+            padding: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .marquee-text {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 25s linear infinite;
+            color: #ffff00;
+            font-size: 14px;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Navigation buttons - classic web buttons */
+        .nav-section {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            display: inline-block;
+            background: linear-gradient(180deg, #666666, #333333);
+            border: 3px outset #888888;
+            color: #ffffff;
+            padding: 8px 20px;
+            margin: 5px;
+            font-family: "MS Sans Serif", "Geneva", sans-serif;
+            font-size: 14px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .nav-button:hover {
+            background: linear-gradient(180deg, #888888, #555555);
+        }
+
+        .nav-button:active {
+            border-style: inset;
+        }
+
+        /* Welcome section */
+        .welcome-box {
+            background: #000000;
+            border: 2px solid #00ff00;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .welcome-box h2 {
+            color: #ff00ff;
+            text-align: center;
+            margin-top: 0;
+            font-size: 24px;
+        }
+
+        .welcome-box p {
+            color: #cccccc;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* Software showcase */
+        .software-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .software-card {
+            background: linear-gradient(135deg, #1a1a4d, #330066);
+            border: 2px ridge #cc00ff;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .software-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #ff00ff;
+        }
+
+        .software-card h3 {
+            color: #ffff00;
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+
+        .software-card p {
+            color: #aaaaaa;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .software-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        /* Under construction - cozy version */
+        .construction {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #1a1a2e;
+            border: 1px dashed #666699;
+            border-radius: 4px;
+        }
+
+        .construction-text {
+            color: #cc99ff;
+            font-size: 14px;
+        }
+
+        .construction-text .cone {
+            display: inline-block;
+            animation: wobble 2s ease-in-out infinite;
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        /* Guestbook & Counter */
+        .footer-widgets {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+            font-family: "Courier New", monospace;
+        }
+
+        .widget {
             text-align: center;
         }
 
-        /* THE SPINNING FLOPPY BACKGROUND (Kept as requested) */
-        .floppy-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            /* Floppies made slightly more translucent for the dark theme */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg transform='rotate(0 50 50)'%3E%3Crect x='20' y='20' width='60' height='60' fill='%235555ff' stroke='%23ffffff' stroke-width='2' opacity='0.3'/%3E%3Crect x='35' y='20' width='30' height='20' fill='%23cccccc' opacity='0.3'/%3E%3Crect x='25' y='60' width='50' height='20' fill='%23ffffff' opacity='0.3'/%3E%3C/g%3E%3C/svg%3E");
-            opacity: 0.6;
-            animation: spinBg 25s linear infinite;
-        }
-
-        @keyframes spinBg {
-            from { background-position: 0 0; transform: rotate(0deg); }
-            to { background-position: 200px 200px; transform: rotate(5deg); }
-        }
-
-        /* MAIN CONTAINER */
-        .main-container {
-            width: 800px;
-            max-width: 90%;
-            margin: 30px auto;
-            /* Semi-transparent dark background */
-            background-color: rgba(0, 0, 40, 0.85);
-            /* Neon border instead of gray bevel */
-            border: 3px dashed #00FF00;
-            padding: 25px;
-            box-shadow: 0 0 20px #00FF00; /* Neon glow */
-        }
-
-        /* TYPOGRAPHY */
-        h1 {
-            font-family: 'Impact', 'Arial Black', sans-serif;
-            color: #FFFFFF;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            font-size: 3em;
-            margin-bottom: 10px;
-            /* Intense neon glow */
-            text-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00, 0 0 30px #00FF00;
-        }
-
-        h2 {
-            background-color: #00FF00;
-            color: #000000;
-            display: inline-block;
+        .counter {
+            background: #000000;
+            border: 2px inset #666666;
             padding: 5px 15px;
-            transform: skew(-10deg); /* Edgy tilt */
-            font-family: 'Comic Sans MS', 'Arial', sans-serif;
-            border: 2px solid #FFFFFF;
+            color: #00ff00;
+            font-family: "Courier New", monospace;
+            font-size: 18px;
         }
 
-        p { line-height: 1.5; font-size: 1.1em; }
-
-        /* LINKS - Hot Pink for contrast */
-        a { color: #FF00FF; text-decoration: underline; font-weight: bold; }
-        a:visited { color: #AA00AA; }
-        /* Blinking hover effect */
-        a:hover { color: #FFFFFF; background-color: #FF00FF; text-decoration: none; animation: blink 0.5s infinite; }
-
-        @keyframes blink { 50% { opacity: 0.5; } }
-
-        /* MARQUEE */
-        .marquee-container {
-            background-color: #FF00FF;
-            color: #FFFFFF;
-            border: 3px dotted #FFFFFF;
-            padding: 2px;
-            margin: 20px auto;
-            width: 80%;
-            font-weight: bold;
+        .widget-label {
+            color: #ff9900;
+            font-size: 12px;
+            margin-top: 5px;
         }
 
-        /* NAVIGATION LINKS (Simple pipes | separator) */
-        .nav-links {
+        /* Webring */
+        .webring {
+            text-align: center;
             margin: 20px 0;
-            font-size: 1.2em;
-        }
-        .nav-separator { color: #FFFFFF; margin: 0 10px; }
-
-        /* FUNKY HORIZONTAL RULE */
-        hr.funky {
-            border: 0;
-            height: 4px;
-            background-image: linear-gradient(to right, #000000, #00FF00, #FF00FF, #000000);
-            margin: 30px 0;
-        }
-
-        /* FEATURE BOXES */
-        .feature-box {
-            border: 2px solid #FFFFFF;
-            background: rgba(255, 0, 255, 0.1);
             padding: 15px;
-            margin: 20px auto;
-            width: 80%;
+            background: #1a1a1a;
+            border: 2px groove #666666;
         }
 
-        /* IMAGES */
-        .construction-gif {
-            width: 100px;
-            height: auto;
-            border: 2px solid yellow;
+        .webring-title {
+            color: #ff6600;
+            font-size: 14px;
+            margin-bottom: 10px;
         }
 
+        .webring-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .webring-link {
+            color: #00ffff;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .webring-link:hover {
+            color: #ff00ff;
+        }
+
+        /* Email link with hover */
+        .email-section {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .email-link {
+            color: #00ffff;
+            font-size: 16px;
+        }
+
+        .email-link:hover {
+            color: #ff00ff;
+        }
+
+        /* Animated GIF placeholders (CSS animated) */
+        .dancing-baby {
+            display: inline-block;
+            animation: dance 0.5s ease-in-out infinite alternate;
+            font-size: 30px;
+        }
+
+        @keyframes dance {
+            from { transform: rotate(-10deg) translateY(0); }
+            to { transform: rotate(10deg) translateY(-5px); }
+        }
+
+        .spinning-thing {
+            display: inline-block;
+            animation: spin 2s linear infinite;
+            font-size: 24px;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Spinning floppy disk */
+        .spinning-floppy {
+            display: inline-block;
+            animation: spin 3s linear infinite;
+            font-size: 24px;
+        }
+
+        /* 88x31 buttons area */
+        .buttons-88x31 {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+        }
+
+        .button-88x31 {
+            display: inline-block;
+            width: 88px;
+            height: 31px;
+            margin: 3px;
+            font-size: 10px;
+            line-height: 31px;
+            text-align: center;
+            text-decoration: none;
+            font-family: "MS Sans Serif", sans-serif;
+            border: 1px solid #000;
+        }
+
+        .btn-html {
+            background: linear-gradient(180deg, #6666ff, #3333cc);
+            color: white;
+        }
+
+        .btn-css {
+            background: linear-gradient(180deg, #66cc66, #339933);
+            color: white;
+        }
+
+        .btn-js {
+            background: linear-gradient(180deg, #ffcc00, #cc9900);
+            color: black;
+        }
+
+        .btn-love {
+            background: linear-gradient(180deg, #ff6699, #cc3366);
+            color: white;
+        }
+
+        /* Best viewed badge */
+        .best-viewed {
+            text-align: center;
+            color: #888888;
+            font-size: 11px;
+            margin: 20px 0;
+            font-family: "MS Sans Serif", sans-serif;
+        }
+
+        /* Sparkle decorations */
+        .sparkle {
+            color: #ffff00;
+            animation: sparkle 0.8s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        .sparkle:nth-child(2) { animation-delay: 0.2s; }
+        .sparkle:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        /* Fire text effect */
+        .fire-text {
+            background: linear-gradient(180deg, #ff0000, #ff6600, #ffff00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+            animation: fire-flicker 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes fire-flicker {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.3); }
+        }
+
+        /* About me table - classic web design */
+        .about-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-family: "MS Sans Serif", sans-serif;
+            font-size: 14px;
+        }
+
+        .about-table td {
+            border: 1px solid #666666;
+            padding: 8px;
+            background: #1a1a1a;
+        }
+
+        .about-table td:first-child {
+            background: #330066;
+            color: #ffff00;
+            width: 120px;
+            text-align: right;
+        }
+
+        .about-table td:last-child {
+            color: #cccccc;
+        }
+
+        /* Link colors */
+        a {
+            color: #00ffff;
+        }
+
+        a:visited {
+            color: #cc99ff;
+        }
+
+        a:hover {
+            color: #ff00ff;
+        }
+
+        /* Floating floppy disks background */
+        .floating-floppies {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .floppy {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0.15;
+            animation: float-diagonal linear infinite;
+        }
+
+        .floppy:nth-child(1) { left: 5%; animation-duration: 25s; animation-delay: 0s; }
+        .floppy:nth-child(2) { left: 15%; animation-duration: 30s; animation-delay: -5s; }
+        .floppy:nth-child(3) { left: 25%; animation-duration: 22s; animation-delay: -10s; }
+        .floppy:nth-child(4) { left: 35%; animation-duration: 28s; animation-delay: -3s; }
+        .floppy:nth-child(5) { left: 45%; animation-duration: 26s; animation-delay: -8s; }
+        .floppy:nth-child(6) { left: 55%; animation-duration: 32s; animation-delay: -12s; }
+        .floppy:nth-child(7) { left: 65%; animation-duration: 24s; animation-delay: -6s; }
+        .floppy:nth-child(8) { left: 75%; animation-duration: 29s; animation-delay: -15s; }
+        .floppy:nth-child(9) { left: 85%; animation-duration: 27s; animation-delay: -2s; }
+        .floppy:nth-child(10) { left: 95%; animation-duration: 31s; animation-delay: -9s; }
+
+        @keyframes float-diagonal {
+            0% {
+                transform: translateY(-50px) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            5% {
+                opacity: 0.15;
+            }
+            95% {
+                opacity: 0.15;
+            }
+            100% {
+                transform: translateY(calc(100vh + 50px)) translateX(-150px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* LIVE badge for active products */
+        .software-card.live {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .software-card.live::after {
+            content: "LIVE!";
+            position: absolute;
+            top: 10px;
+            right: -25px;
+            background: #00ff00;
+            color: #000;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 3px 30px;
+            transform: rotate(45deg);
+            font-family: "MS Sans Serif", sans-serif;
+            animation: live-pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes live-pulse {
+            0%, 100% { background: #00ff00; }
+            50% { background: #66ff66; }
+        }
+
+        /* Coming soon overlay for inactive cards */
+        .software-card.coming-soon {
+            position: relative;
+            cursor: default;
+        }
+
+        .software-card.coming-soon::after {
+            content: "Coming Soon";
+            position: absolute;
+            top: 10px;
+            right: -25px;
+            background: #ff6600;
+            color: #000;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 3px 30px;
+            transform: rotate(45deg);
+            font-family: "MS Sans Serif", sans-serif;
+        }
+
+        .software-card.coming-soon:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .software-card.coming-soon .software-icon,
+        .software-card.coming-soon h3,
+        .software-card.coming-soon p {
+            opacity: 0.6;
+        }
     </style>
 </head>
 <body>
+    <!-- Floating Floppy Disks Background -->
+    <div class="floating-floppies">
+        <div class="floppy">💾</div>
+        <div class="floppy">💾</div>
+        <div class="floppy">💾</div>
+        <div class="floppy">💾</div>
+        <div class="floppy">💾</div>
+        <div class="floppy">💾</div>
+        <div class="floppy">💾</div>
+        <div class="floppy">💾</div>
+        <div class="floppy">💾</div>
+        <div class="floppy">💾</div>
+    </div>
 
-    <div class="floppy-bg"></div>
-
-    <div class="main-container">
-        
-        <center>
-            <img src="https://web.archive.org/web/20090830082220/http://geocities.com/clipart/pbi/pictures/Templates/cooltext.gif" alt="COOL">
-            <br>
-            <h1>Tchotchke Software</h1>
-            <div style="color: white; font-family: monospace;">---==[ Cozy tech for a cold world ]==---</div>
-        </center>
-
-        <div class="nav-links">
-            <a href="#">Home</a>
-            <span class="nav-separator">|</span>
-            <a href="Sandwich_Machine.html">Sandwich Machine</a> 
-            <span class="nav-separator">|</span>
-            <a href="#">RPG To-Do</a>
-            <span class="nav-separator">|</span>
-            <a href="#">Links</a>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="sparkle">✦</div>
+            <div class="sparkle">✦</div>
+            <div class="sparkle">✦</div>
+            <div class="logo-text">TCHOTCHKE SOFTWARE</div>
+            <div class="tagline">~ Delightful Digital Doodads Since 2025 ~</div>
+            <div class="sparkle">✦</div>
+            <div class="sparkle">✦</div>
+            <div class="sparkle">✦</div>
         </div>
 
+        <div class="divider"></div>
+
+        <!-- Marquee -->
         <div class="marquee-container">
-            <marquee scrollamount="4">
-                Welcome to Tchotchke Software! Don't forget to sign the guestbook! --- NEW: Sandwich Machine v1.0 RELEASED! --- Are you really still reading this?
-            </marquee>
+            <div class="marquee-text">
+                ★ Welcome to Tchotchke Software! ★ Home of quirky apps and delightful digital creations! ★ 
+                Warm technology for cool people! ★ NEW: The Great Sandwich Machine is LIVE! ★ 
+                More apps coming soon ~ stay tuned! ★
+            </div>
         </div>
 
-        <hr class="funky">
+        <!-- Navigation -->
+        <div class="nav-section">
+            <a href="#about" class="nav-button">📁 About</a>
+            <a href="#software" class="nav-button">💾 Software</a>
+            <a href="#contact" class="nav-button">📧 Contact</a>
+            <a href="#links" class="nav-button">🔗 Links</a>
+            <a href="#guestbook" class="nav-button">📝 Guestbook</a>
+        </div>
 
-        <center>
-            <img src="https://web.archive.org/web/20091026193447/http://geocities.com/clipart/pbi/pictures/Templates/construction_yellow.gif" alt="Under Construction" class="construction-gif">
-            <p>Excuse the mess, this site is ALWAYS under construction!</p>
-        </center>
+        <div class="divider"></div>
 
-        <p>Tchotchke Software is your home for cozy software and nostalgic tech.</p>
-
-        <hr class="funky">
-
-        <h2>LATEST RELEASES</h2>
-
-        <div class="feature-box">
-            <img src="https://web.archive.org/web/20091027064946/http://geocities.com/clipart/pbi/bullets/Templates/new_ani.gif" alt="NEW!">
-            <h3 style="color: #FFFFFF; margin: 5px 0;">THE GREAT SANDWICH MACHINE</h3>
-            <p>Is it a sandwich? We built a highly advanced algorithm to help you decide!</p>
+        <!-- Welcome Box -->
+        <div class="welcome-box" id="about">
+            <h2>
+                <span class="dancing-baby">👋</span>
+                Welcome, Traveler!
+                <span class="dancing-baby">👋</span>
+            </h2>
             <p>
-                👉 <a href="Sandwich_Machine.html" style="font-size: 1.3em;">ENTER THE SANDWICH ZONE</a> 👈
+                <b class="fire-text">Tchotchke Software</b> is a small indie studio dedicated to 
+                creating <i>warm, approachable, and genuinely useful</i> digital experiences. 
+                We believe technology should feel like a cozy corner of the internet — 
+                where nerdy passion meets human-centered design.
+            </p>
+            <p>
+                Our philosophy is simple: software doesn't have to be cold and corporate. 
+                Every app we make is a little <b>tchotchke</b> — a charming digital trinket 
+                that brings a smile to your face while actually being useful. Think of us 
+                as the software equivalent of that weird mug your grandma gave you that you 
+                actually love using.
+            </p>
+            <p style="text-align: center; color: #00ff00;">
+                <span class="spinning-thing">⚙️</span>
+                Handcrafted with ❤️ in Pennsylvania
+                <span class="spinning-thing">⚙️</span>
             </p>
         </div>
 
-        <div class="feature-box" style="opacity: 0.6;">
-            <h3 style="color: #FFFFFF; margin: 5px 0;">FANTASY RPG TO-DO APP</h3>
-            <p>[COMING SOON] Turn boring chores into epic quests.</p>
+        <!-- Software Showcase -->
+        <h2 style="text-align: center; color: #ff6600;">
+            <span class="spinning-floppy">💾</span>
+            Our Software Collection
+            <span class="spinning-floppy">💾</span>
+        </h2>
+        
+        <div class="software-grid" id="software">
+            <a href="Sandwich_Machine.html" style="text-decoration: none;">
+            <div class="software-card live">
+                <div class="software-icon">🥪</div>
+                <h3>The Great Sandwich Machine</h3>
+                <p>200+ sandwiches! Smart filtering! Build your perfect sandwich or discover new favorites!</p>
+            </div>
+            </a>
+            <div class="software-card coming-soon" style="overflow: hidden;">
+                <div class="software-icon">⚔️</div>
+                <h3>Questlife</h3>
+                <p>Turn your to-do list into an RPG! Earn XP, level up, and conquer your obligations.</p>
+            </div>
+            <div class="software-card coming-soon" style="overflow: hidden;">
+                <div class="software-icon">🚽</div>
+                <h3>Peeminder</h3>
+                <p>Your personal hydration schedule calculator. Yes, really. Based on that one Victorious joke.</p>
+            </div>
+            <div class="software-card coming-soon" style="overflow: hidden;">
+                <div class="software-icon">🍎</div>
+                <h3>Nutritracker</h3>
+                <p>Simple, private nutrition logging. No guilt, no goals, just data. The way it should be.</p>
+            </div>
+            <div class="software-card coming-soon" style="overflow: hidden;">
+                <div class="software-icon">📧</div>
+                <h3>Fwd: Fwd: Re:</h3>
+                <p>A newsletter from grandma's inbox. Daily jokes, chain letters, old recipes, and wisdom you didn't ask for.</p>
+            </div>
+            <div class="software-card coming-soon" style="overflow: hidden;">
+                <div class="software-icon">💾</div>
+                <h3>More Coming Soon...</h3>
+                <p>We're always cooking up new digital delights! Watch this space.</p>
+            </div>
         </div>
 
-        <hr class="funky">
+        <div class="divider"></div>
 
-        <div style="margin-top: 30px; font-size: 0.9em; color: #FFFFFF;">
-            <p>You are visitor number:</p>
-            <div style="border: 2px inset #00FF00; color: #00FF00; background: black; display: inline-block; padding: 2px 5px; font-family: monospace; font-size: 1.5em;">004821</div>
-            <br><br>
-            <img src="https://web.archive.org/web/20091027085123/http://geocities.com/clipart/pbi/buttons/Templates/ie_logo.gif" alt="IE Now">
-            <img src="https://web.archive.org/web/20091027051651/http://geocities.com/clipart/pbi/buttons/Templates/ns_logo.gif" alt="Netscape Now">
+        <!-- Under Construction -->
+        <div class="construction">
+            <span class="construction-text">
+                <span class="cone">🚧</span>
+                Site under construction ~ more goodies coming soon!
+                <span class="cone">🚧</span>
+            </span>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Contact Section -->
+        <div class="email-section" id="contact">
+            <h2 style="color: #ff00ff;">📧 Get In Touch! 📧</h2>
+            <p style="color: #cccccc;">
+                Want to say hi? Have a software idea? Just want to chat about sandwiches?<br>
+                We'd love to hear from you!
+            </p>
+            <a href="mailto:hello@tchotchkesoftware.com" class="email-link">
+                ✉️ hello@tchotchkesoftware.com ✉️
+            </a>
+        </div>
+
+        <!-- 88x31 Buttons -->
+        <div class="buttons-88x31" id="links">
+            <span class="button-88x31 btn-html">HTML</span>
+            <span class="button-88x31 btn-css">CSS</span>
+            <span class="button-88x31 btn-js">JavaScript</span>
+            <span class="button-88x31 btn-love">Made w/ ❤️</span>
+        </div>
+
+        <!-- Footer Widgets -->
+        <div class="footer-widgets" id="guestbook">
+            <div class="widget">
+                <div class="counter">000,042</div>
+                <div class="widget-label">Visitors!</div>
+            </div>
+            <div class="widget">
+                <a href="#" class="nav-button" style="font-size: 12px;">📝 Sign Guestbook</a>
+                <div class="widget-label">Leave a message!</div>
+            </div>
+        </div>
+
+        <!-- Webring -->
+        <div class="webring">
+            <div class="webring-title">🌐 Indie Software Webring 🌐</div>
+            <div class="webring-nav">
+                <a href="#" class="webring-link">[ ← Prev ]</a>
+                <span style="color: #888;">|</span>
+                <a href="#" class="webring-link">[ Random ]</a>
+                <span style="color: #888;">|</span>
+                <a href="#" class="webring-link">[ Next → ]</a>
+            </div>
+        </div>
+
+        <!-- Best Viewed -->
+        <div class="best-viewed">
+            Best viewed with Netscape Navigator 4.0 or Internet Explorer 5.0<br>
+            Resolution: 800x600 • 256 Colors<br>
             <br>
-            © 2025 Tchotchke Software.
+            © 2025 Tchotchke Software • All Rights Reserved<br>
+            <span style="color: #666666;">You are visitor #42 - Thanks for stopping by! 🎉</span>
         </div>
-
     </div>
-
 </body>
 </html>
