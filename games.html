@@ -84,6 +84,7 @@
             cursor: pointer;
             transition: all 0.1s;
             text-shadow: 0 0 5px #00ff00;
+            vertical-align: middle;
         }
 
         .nav-button:hover {
@@ -94,6 +95,31 @@
 
         .nav-button:active {
             border-style: inset;
+        }
+
+        .nav-button.coming-soon-btn {
+            position: relative;
+            overflow: hidden;
+            color: #888888;
+            text-shadow: none;
+            cursor: default;
+        }
+
+        .nav-button.coming-soon-btn:hover {
+            background: linear-gradient(180deg, #333333, #1a1a1a);
+            color: #888888;
+            text-shadow: none;
+        }
+
+        .nav-button.coming-soon-btn .soon-badge {
+            position: absolute;
+            top: -2px;
+            right: -20px;
+            background: #ff6600;
+            color: #000;
+            font-size: 8px;
+            padding: 2px 15px;
+            transform: rotate(45deg);
         }
 
         /* CRT TV Container */
@@ -373,6 +399,7 @@
             <a href="index.html" class="nav-button">🏠 Home</a>
             <a href="software.html" class="nav-button">💾 Software</a>
             <a href="fwdfwdre.html" class="nav-button">📧 Contact</a>
+            <a href="#" class="nav-button coming-soon-btn">💬 Message Board<span class="soon-badge">Soon!</span></a>
             <a href="guestbook.html" class="nav-button">📝 Guestbook</a>
         </div>
 
