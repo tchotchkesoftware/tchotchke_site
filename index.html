@@ -548,14 +548,8 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <div class="sparkle">✦</div>
-            <div class="sparkle">✦</div>
-            <div class="sparkle">✦</div>
             <div class="logo-text">TCHOTCHKE SOFTWARE</div>
-            <div class="tagline">~ Delightful Digital Doodads Since 2025 ~</div>
-            <div class="sparkle">✦</div>
-            <div class="sparkle">✦</div>
-            <div class="sparkle">✦</div>
+            <div class="tagline">~ Crafting Comfortable Software Since 2025 ~</div>
         </div>
 
         <div class="divider"></div>
@@ -573,7 +567,7 @@
             <a href="#about" class="nav-button">📁 About</a>
             <a href="#software" class="nav-button">💾 Software</a>
             <a href="#contact" class="nav-button">📧 Contact</a>
-            <a href="#links" class="nav-button">🔗 Links</a>
+            <a href="#" class="nav-button" style="position: relative; overflow: hidden;">💬 Message Board<span style="position: absolute; top: -2px; right: -20px; background: #ff6600; color: #000; font-size: 8px; padding: 2px 15px; transform: rotate(45deg);">Soon!</span></a>
             <a href="#guestbook" class="nav-button">📝 Guestbook</a>
         </div>
 
@@ -667,9 +661,16 @@
                 Want to say hi? Have a software idea? Just want to chat about sandwiches?<br>
                 We'd love to hear from you!
             </p>
-            <a href="/cdn-cgi/l/email-protection#670f020b0b082713040f0813040f0c0214080113100615024904080a" class="email-link">
-                ✉️ <span class="__cf_email__" data-cfemail="036b666f6f6c4377606b6c77606b6866706c6577746271662d606c6e">[email&#160;protected]</span> ✉️
+            <a href="#" id="email-link" class="email-link">
+                ✉️ Loading... ✉️
             </a>
+            <script>
+                var user = 'hello';
+                var domain = 'tchotchkesoftware.com';
+                var link = document.getElementById('email-link');
+                link.href = 'mailto:' + user + '@' + domain;
+                link.innerHTML = '✉️ ' + user + '@' + domain + ' ✉️';
+            </script>
         </div>
 
         <!-- 88x31 Buttons -->
