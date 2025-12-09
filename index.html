@@ -1977,41 +1977,29 @@
             
             const paddedInitials = initials.padEnd(3, ' ');
             
-            fetch(LEADERBOARD_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: paddedInitials,
-                    score: score
+            // Use URL parameters with GET-style request to avoid CORS preflight
+            const url = LEADERBOARD_URL + '?action=submit&name=' + encodeURIComponent(paddedInitials) + '&score=' + score;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.scores) {
+                        leaderboard = data.scores;
+                        playerRank = data.rank !== undefined ? data.rank : -1;
+                    }
+                    displayLeaderboard('endScores');
+                    submitBtn.textContent = 'SAVED!';
                 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.scores) {
-                    leaderboard = data.scores;
-                    playerRank = data.rank !== undefined ? data.rank : -1;
-                } else {
-                    // Fallback: add locally
+                .catch(error => {
+                    console.error('Failed to submit score:', error);
+                    // Add locally as fallback for display
                     leaderboard.push({ name: paddedInitials, score: score });
                     leaderboard.sort((a, b) => b.score - a.score);
                     leaderboard = leaderboard.slice(0, 20);
-                    playerRank = leaderboard.findIndex(e => e.name === paddedInitials && e.score === score);
-                }
-                displayLeaderboard('endScores');
-                submitBtn.textContent = 'SAVED!';
-            })
-            .catch(error => {
-                console.error('Failed to submit score:', error);
-                // Fallback: add locally
-                leaderboard.push({ name: paddedInitials, score: score });
-                leaderboard.sort((a, b) => b.score - a.score);
-                leaderboard = leaderboard.slice(0, 20);
-                playerRank = leaderboard.findIndex(e => e.name === paddedInitials && e.score === score);
-                displayLeaderboard('endScores');
-                submitBtn.textContent = 'SAVED!';
-            });
+                    playerRank = leaderboard.findIndex(e => e.name.trim() === paddedInitials.trim() && e.score === score);
+                    displayLeaderboard('endScores');
+                    submitBtn.textContent = 'SAVED!';
+                });
         }
 
         // ============================================
