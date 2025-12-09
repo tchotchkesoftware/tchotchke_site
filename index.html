@@ -1890,29 +1890,60 @@
         }
 
         // ============================================
-        // LEADERBOARD
+        // LEADERBOARD (Google Sheets)
         // ============================================
+        const LEADERBOARD_URL = 'https://script.google.com/macros/s/AKfycbwytqMP8XL1YyQj04cJrW33LXOe5paBEDLqs5_0Hoae5SGj7TW-rUTAqdlEunbhWfy8bQ/exec';
+
         function loadLeaderboard() {
-            const stored = localStorage.getItem('speedWorld1996Leaderboard');
-            leaderboard = stored ? JSON.parse(stored) : [
-                { name: 'AAA', score: 50000 },
-                { name: 'BBB', score: 40000 },
-                { name: 'CCC', score: 30000 },
-                { name: 'DDD', score: 20000 },
-                { name: 'EEE', score: 10000 }
-            ];
+            // Show loading state
+            displayLeaderboard('startScores', null, true);
+            displayLeaderboard('endScores', null, true);
+            displayLeaderboard('pauseScores', null, true);
             
-            displayLeaderboard('startScores');
-            displayLeaderboard('endScores');
-            displayLeaderboard('pauseScores');
+            fetch(LEADERBOARD_URL)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.scores) {
+                        leaderboard = data.scores;
+                    } else {
+                        // Fallback to defaults if fetch fails
+                        leaderboard = [
+                            { name: 'AAA', score: 50000 },
+                            { name: 'BBB', score: 40000 },
+                            { name: 'CCC', score: 30000 },
+                            { name: 'DDD', score: 20000 },
+                            { name: 'EEE', score: 10000 }
+                        ];
+                    }
+                    displayLeaderboard('startScores');
+                    displayLeaderboard('endScores');
+                    displayLeaderboard('pauseScores');
+                })
+                .catch(error => {
+                    console.error('Failed to load leaderboard:', error);
+                    // Fallback to defaults
+                    leaderboard = [
+                        { name: 'AAA', score: 50000 },
+                        { name: 'BBB', score: 40000 },
+                        { name: 'CCC', score: 30000 },
+                        { name: 'DDD', score: 20000 },
+                        { name: 'EEE', score: 10000 }
+                    ];
+                    displayLeaderboard('startScores');
+                    displayLeaderboard('endScores');
+                    displayLeaderboard('pauseScores');
+                });
         }
 
-        function saveLeaderboard() {
-            localStorage.setItem('speedWorld1996Leaderboard', JSON.stringify(leaderboard));
-        }
-
-        function displayLeaderboard(elementId) {
+        function displayLeaderboard(elementId, highlightRank = null, loading = false) {
             const container = document.getElementById(elementId);
+            if (!container) return;
+            
+            if (loading) {
+                container.innerHTML = '<div style="color: #888;">Loading scores...</div>';
+                return;
+            }
+            
             container.innerHTML = '';
             
             const top10 = leaderboard.slice(0, 10);
@@ -1933,25 +1964,54 @@
         }
 
         function submitScore() {
-            const initials = document.getElementById('initialsInput').value.toUpperCase().slice(0, 3);
+            const initialsInput = document.getElementById('initialsInput');
+            const initials = initialsInput.value.toUpperCase().slice(0, 3);
             if (initials.length === 0) {
-                document.getElementById('initialsInput').focus();
+                initialsInput.focus();
                 return;
             }
             
+            const submitBtn = document.getElementById('submitScoreBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'SAVING...';
+            
             const paddedInitials = initials.padEnd(3, ' ');
             
-            leaderboard.push({ name: paddedInitials, score: score });
-            leaderboard.sort((a, b) => b.score - a.score);
-            leaderboard = leaderboard.slice(0, 20);
-            
-            playerRank = leaderboard.findIndex(e => e.name === paddedInitials && e.score === score);
-            
-            saveLeaderboard();
-            displayLeaderboard('endScores');
-            
-            document.getElementById('submitScoreBtn').disabled = true;
-            document.getElementById('submitScoreBtn').textContent = 'SAVED!';
+            fetch(LEADERBOARD_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: paddedInitials,
+                    score: score
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.scores) {
+                    leaderboard = data.scores;
+                    playerRank = data.rank !== undefined ? data.rank : -1;
+                } else {
+                    // Fallback: add locally
+                    leaderboard.push({ name: paddedInitials, score: score });
+                    leaderboard.sort((a, b) => b.score - a.score);
+                    leaderboard = leaderboard.slice(0, 20);
+                    playerRank = leaderboard.findIndex(e => e.name === paddedInitials && e.score === score);
+                }
+                displayLeaderboard('endScores');
+                submitBtn.textContent = 'SAVED!';
+            })
+            .catch(error => {
+                console.error('Failed to submit score:', error);
+                // Fallback: add locally
+                leaderboard.push({ name: paddedInitials, score: score });
+                leaderboard.sort((a, b) => b.score - a.score);
+                leaderboard = leaderboard.slice(0, 20);
+                playerRank = leaderboard.findIndex(e => e.name === paddedInitials && e.score === score);
+                displayLeaderboard('endScores');
+                submitBtn.textContent = 'SAVED!';
+            });
         }
 
         // ============================================
